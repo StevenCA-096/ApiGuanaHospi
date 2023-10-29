@@ -12,9 +12,9 @@ namespace DataAccess.Models
         public int Id_Enfermedad_Sintoma { get; set; }
         public int Id_Enfermedad { get; set; }
         [JsonIgnore]
-        public Enfermedad enfermedad { get; set; }
+        public Enfermedad? enfermedad { get; set; }
         public int Id_Sintoma { get; set; }
         [JsonIgnore]
-        public Sintoma sintoma { get; set; }
+        public Sintoma? sintoma { get; set; }
     }
 }

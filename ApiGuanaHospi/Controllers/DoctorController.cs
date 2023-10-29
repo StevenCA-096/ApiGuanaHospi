@@ -1,6 +1,7 @@
 ﻿using DataAccess.Context;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,9 +17,9 @@ namespace ApiGuanaHospi.Controllers
         }
         // GET: api/<DoctorController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public List<Doctor> Get()
         {
-            return new string[] { "value1", "value2" };
+            return _context.doctor.FromSqlRaw($"SP_ObtenerDoctores").ToList();
         }
 
         // GET api/<DoctorController>/5
@@ -32,6 +33,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpPost]
         public void Post([FromBody] Doctor doctor)
         {
+            _context.Database.ExecuteSql($"SP_InsertarDoctor {doctor.Codigo},{doctor.Nombre},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
         }
 
         // PUT api/<DoctorController>/5

@@ -14,8 +14,8 @@ namespace DataAccess.Models
         public string Nombre { get; set; }
         public string Apellido1 { get; set; }
         public string Apellido2 { get; set; }
-        public int Id_Especialidad { get; set; }
+        public int ID_Especialidad { get; set; }
         [JsonIgnore]
-        public Especialidad especialidad { get; set; }
+        public Especialidad? especialidad { get; set; }
     }
 }

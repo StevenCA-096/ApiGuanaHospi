@@ -34,21 +34,21 @@ namespace ApiGuanaHospi.Controllers
         [HttpPost]
         public void Post([FromBody] Enfermedad enfermedad)
         {
-            _context.Database.ExecuteSqlInterpolated($"SP_InsertarEnfermedad {enfermedad.Nombre}");
+            _context.Database.ExecuteSql($"SP_InsertarEnfermedad {enfermedad.Nombre}");
         }
 
         // PUT api/<EnfermedadController>/5
         [HttpPut]
         public void Put([FromBody] Enfermedad enfermedad)
         {
-            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarEnfermedad {enfermedad.Id_Enfermedad}, {enfermedad.Nombre}");
+            _context.Database.ExecuteSql($"SP_ActualizarEnfermedad {enfermedad.Id_Enfermedad}, {enfermedad.Nombre}");
         }
 
         // DELETE api/<EnfermedadController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _context.Database.ExecuteSqlInterpolated($"SP_EliminarEnfermedad {id}");
+            _context.Database.ExecuteSql($"SP_EliminarEnfermedad {id}");
         }
     }
 }

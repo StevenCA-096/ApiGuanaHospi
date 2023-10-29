@@ -36,7 +36,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpPost]
         public Especialidad Post([FromBody] Especialidad especialidad)
         {
-            var res = _context.Database.ExecuteSqlRaw($"SP_InsertarEspecialidad {especialidad.Nombre}");
+            var res = _context.Database.ExecuteSql($"SP_InsertarEspecialidad {especialidad.Nombre}");
             return especialidad;
         }
 
@@ -44,14 +44,14 @@ namespace ApiGuanaHospi.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string nuevoNombre)
         {
-            _context.Database.ExecuteSqlRaw($"SP_ActualizarEspecialidad {id},{nuevoNombre}");
+            _context.Database.ExecuteSql($"SP_ActualizarEspecialidad {id},{nuevoNombre}");
         }
 
         // DELETE api/<EspecialidadController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _context.Database.ExecuteSqlRaw($"SP_EliminarEspecialidad {id}");
+            _context.Database.ExecuteSql($"SP_EliminarEspecialidad {id}");
         }
     }
 }

@@ -2,6 +2,7 @@
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlTypes;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,21 +36,21 @@ namespace ApiGuanaHospi.Controllers
         public void Post([FromBody] Sintoma sintoma)
         {
             
-            _context.Database.ExecuteSqlRaw($"SP_InsertarSintoma {sintoma.Nombre.TrimEnd()}");
+            _context.Database.ExecuteSql($"execute SP_InsertarSintoma {sintoma.Nombre.Trim()}");
         }
 
         // PUT api/<SintomaController>/5
         [HttpPut]
         public void Put([FromBody] Sintoma sintoma)
         {
-            _context.Database.ExecuteSqlRaw($"SP_ActualizarSintoma {sintoma.ID_Sintoma},{sintoma.Nombre}");
+            _context.Database.ExecuteSql($"SP_ActualizarSintoma {sintoma.ID_Sintoma},{sintoma.Nombre.Trim()}");
         }
 
         // DELETE api/<SintomaController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _context.Database.ExecuteSqlRaw($"SP_EliminarSintoma {id}");
+            _context.Database.ExecuteSql($"SP_EliminarSintoma {id}");
         }
     }
 }
