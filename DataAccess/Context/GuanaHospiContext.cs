@@ -47,7 +47,7 @@ namespace DataAccess.Context
             modelBuilder.Entity<Usuario>()
                 .HasOne(f => f.rol)
                 .WithMany(e => e.usuarios)
-                .HasForeignKey(f => f.Id_Rol);
+                .HasForeignKey(f => f.ID_Rol);
 
             modelBuilder.Entity<Enfermedad>().HasKey(e => e.Id_Enfermedad);
 
