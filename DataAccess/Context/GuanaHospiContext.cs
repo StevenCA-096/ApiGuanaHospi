@@ -21,6 +21,8 @@ namespace DataAccess.Context
         public DbSet<Doctor> doctor { get; set; } = default!;
         public DbSet<Enfermedad_Sintoma> enfermedad_Sintoma { get; set; } = default!;
         public DbSet<Enfermedad> enfermedad { get; set; } = default!;
+        public DbSet<Usuario> usuario { get; set; } = default!;
+        public DbSet<Rol> rol { get; set; } = default!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,11 +34,20 @@ namespace DataAccess.Context
             modelBuilder.Entity<Doctor>()
                 .HasKey(d => d.ID_Doctor);
 
+            modelBuilder.Entity<Usuario>().HasKey(u => u.Id_Usuario);
+
+            modelBuilder.Entity<Rol>().HasKey(r => r.Id_Rol);
+
             //indicamos que la tabla doctor tiene una fk de la tabla especialidad que es su pk en dicha tabla
             modelBuilder.Entity<Doctor>()
                 .HasOne(d => d.especialidad)
                 .WithMany(e => e.doctores)
                 .HasForeignKey(d => d.ID_Especialidad);
+
+            modelBuilder.Entity<Usuario>()
+                .HasOne(f => f.rol)
+                .WithMany(e => e.usuarios)
+                .HasForeignKey(f => f.ID_Rol);
 
             modelBuilder.Entity<Enfermedad>().HasKey(e => e.Id_Enfermedad);
 
