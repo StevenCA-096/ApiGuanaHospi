@@ -36,7 +36,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpPost]
         public Especialidad Post([FromBody] Especialidad especialidad)
         {
-            var res = _context.Database.ExecuteSql($"SP_InsertarEspecialidad {especialidad.Nombre}");
+            var res = _context.Database.ExecuteSql($"SP_InsertarEspecialidad {especialidad.NombreE}");
             return especialidad;
         }
 
