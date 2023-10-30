@@ -11,7 +11,7 @@ namespace DataAccess.Models
         public int Id_Usuario { get; set; }
         public string Correo { get; set; }
         public string Contra { get; set; }
-        public int Id_Rol { get; set;}
+        public int ID_Rol { get; set;}
 
         public Rol rol { get; set; }
     }

@@ -86,14 +86,16 @@ namespace ApiGuanaHospi.Controllers
 
         // PUT api/<DoctorController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] Doctor doctor)
         {
+            _context.Database.ExecuteSql($"SP_ActualizarUsuario {doctor.ID_Doctor}, {doctor.NombreD}, {doctor.Apellido1}, {doctor.Apellido2}, {doctor.ID_Especialidad}");
         }
 
         // DELETE api/<DoctorController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            _context.Database.ExecuteSql($"SP_EliminarDoctor {id}");
         }
     }
 }

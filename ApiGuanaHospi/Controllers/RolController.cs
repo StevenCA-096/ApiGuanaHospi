@@ -16,12 +16,35 @@ namespace ApiGuanaHospi.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        public List<Rol> Get()
+        {
+            return _context.rol.FromSqlRaw("SP_ObtenerRoles").ToList();
+        }
+
+        [HttpGet("{id}")]
+        public string Get(int id)
+        {
+            return "value";
+        }
 
         [HttpPost]
         public Rol Post([FromBody] Rol rol)
         {
             var res = _context.Database.ExecuteSql($"SP_InsertarRol {rol.NombreR}");
             return rol;
+        }
+
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            _context.Database.ExecuteSql($"SP_EliminarRol {id}");
+        }
+
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string nuevoNombre)
+        {
+            _context.Database.ExecuteSql($"SP_ActualizarRol {id},{nuevoNombre}");
         }
     }
 }
