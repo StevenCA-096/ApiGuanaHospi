@@ -22,7 +22,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpGet]
         public List<Especialidad> Get()
         {
-            return _context.especialidad.FromSqlRaw("ObtenerEspecialidades").ToList();
+            return _context.especialidad.FromSqlRaw("SP_ObtenerEspecialidades").ToList();
         }
 
         // GET api/<EspecialidadController>/5

@@ -1,4 +1,5 @@
 ﻿using DataAccess.Context;
+using DataAccess.DTO;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,6 @@ namespace ApiGuanaHospi.Controllers
         {
             _context = context;
         }
-
 
         //[HttpGet]
         //public List<Doctor> Get()
@@ -62,14 +62,27 @@ namespace ApiGuanaHospi.Controllers
             return "value";
         }
 
-        // POST api/<DoctorController>
         [HttpPost]
-        public Doctor Post([FromBody] Doctor doctor)
+        public IActionResult CrearDoctor(DoctorDto doctorDTO)
         {
-            _context.Database.ExecuteSql($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
+            // objeto Doctor a partir del DTO
+            var doctor = new Doctor
+            {
+                //ID_Doctor = doctorDTO.ID_Doctor,
+                Codigo = doctorDTO.Codigo,
+                NombreD = doctorDTO.NombreD,
+                Apellido1 = doctorDTO.Apellido1,
+                Apellido2 = doctorDTO.Apellido2,
+                ID_Especialidad = doctorDTO.ID_Especialidad,
+                //null para no pasar nada al objeto de la relacion 
+                especialidad = null 
+            };
 
-            return doctor;
+            _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
+
+            return Ok("Doctor creado exitosamente");
         }
+
 
         // PUT api/<DoctorController>/5
         [HttpPut("{id}")]
