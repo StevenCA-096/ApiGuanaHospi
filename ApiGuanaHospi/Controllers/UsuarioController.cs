@@ -58,7 +58,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] Usuario usuario)
         {
-            _context.Database.ExecuteSql($"SP_ActualizarUsuario {usuario.Correo}, {usuario.Contra}, {usuario.ID_Rol},");
+            _context.Database.ExecuteSql($"SP_ActualizarUsuario {usuario.Id_Usuario}, {usuario.Correo}, {usuario.Contra}, {usuario.ID_Rol},");
         }
 
         [HttpDelete("{id}")]
