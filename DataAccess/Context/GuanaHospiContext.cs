@@ -16,11 +16,12 @@ namespace DataAccess.Context
             // Deshabilita el uso de proxies de carga diferida, es como utilizar .AsNoTracking() en el controlador
             //this.ChangeTracker.LazyLoadingEnabled = false;
         }
-        public DbSet<Especialidad> especialidad { get; set; } = default!;
-        public DbSet<Sintoma> sintoma { get; set; } = default!;
-        public DbSet<Doctor> doctor { get; set; } = default!;
-        public DbSet<Enfermedad_Sintoma> enfermedad_Sintoma { get; set; } = default!;
-        public DbSet<Enfermedad> enfermedad { get; set; } = default!;
+
+        //public DbSet<Especialidad> especialidad { get; set; } = default!;
+        //public DbSet<Sintoma> sintoma { get; set; } = default!;
+        //public DbSet<Doctor> doctor { get; set; } = default!;
+        //public DbSet<Enfermedad_Sintoma> enfermedad_Sintoma { get; set; } = default!;
+        //public DbSet<Enfermedad> enfermedad { get; set; } = default!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
