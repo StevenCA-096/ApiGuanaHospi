@@ -21,6 +21,8 @@ namespace DataAccess.Context
         public DbSet<Doctor> doctor { get; set; } = default!;
         public DbSet<Enfermedad_Sintoma> enfermedad_Sintoma { get; set; } = default!;
         public DbSet<Enfermedad> enfermedad { get; set; } = default!;
+        public DbSet<Usuario> usuario { get; set; } = default!;
+        public DbSet<Rol> rol { get; set; } = default!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
