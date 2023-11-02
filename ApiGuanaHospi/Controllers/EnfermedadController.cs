@@ -20,7 +20,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpGet]
         public List<Enfermedad> Get()
         {
-            return _context.enfermedad.FromSqlInterpolated($"SP_ObtenerEnfermedades").ToList();
+            return _context.enfermedad.FromSqlRaw($"SP_ObtenerEnfermedades").ToList();
         }
 
         // GET api/<EnfermedadController>/5
