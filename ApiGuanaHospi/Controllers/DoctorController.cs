@@ -4,8 +4,6 @@ using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ApiGuanaHospi.Controllers
 {
     [Route("api/[controller]")]
@@ -32,18 +30,14 @@ namespace ApiGuanaHospi.Controllers
         //    return doctores;
         //}
 
-
-        //get all
         [HttpGet]
-        public List<Doctor> Get()
+        public List<Doctor> GetAllDoctor()
         {
             var doctores = _context.doctor
-                //llamando al sp de la db
-                .FromSqlRaw("EXEC SP_ObtenerDoctores")
-                //.IgnoreQueryFilters()
+                // Llamando al sp de la db usando FromSqlInterpolated
+                .FromSqlInterpolated($"EXEC SP_ObtenerDoctores")
                 .ToList();
 
-            //foreach para poder cargar las relaciones al llamar al sp (lo mismo que utilizar .include() pero sin llamar al EXEC SP y colocando toda la instruccion sql del join)
             foreach (var doctor in doctores)
             {
                 _context.Entry(doctor)
@@ -55,11 +49,28 @@ namespace ApiGuanaHospi.Controllers
         }
 
 
-        // GET api/<DoctorController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult GetDoctorById(int id)
         {
-            return "value";
+            var doctor = _context.doctor
+            .FromSqlInterpolated($"EXEC SP_ObtenerDoctorPorId {id}")
+            .AsEnumerable()
+            .SingleOrDefault();
+
+            if (doctor == null)
+            {
+                return NotFound();
+            }
+
+
+            if (doctor != null)
+            {
+                _context.Entry(doctor)
+                    .Reference(d => d.especialidad)
+                    .Load();
+            }
+
+            return Ok(doctor);
         }
 
         [HttpPost]
@@ -83,19 +94,47 @@ namespace ApiGuanaHospi.Controllers
             return Ok("Doctor creado exitosamente");
         }
 
-
-        // PUT api/<DoctorController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Doctor doctor)
+        public IActionResult ActualizarDoctor(int id, [FromBody] DoctorUpdateDTO doctorDTO)
         {
-            _context.Database.ExecuteSql($"SP_ActualizarUsuario {doctor.ID_Doctor}, {doctor.NombreD}, {doctor.Apellido1}, {doctor.Apellido2}, {doctor.ID_Especialidad}");
+            var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
+
+            if (existingDoctor == null)
+            {
+                return NotFound();
+            }
+
+            existingDoctor.Codigo = doctorDTO.Codigo;
+            existingDoctor.NombreD = doctorDTO.NombreD;
+            existingDoctor.Apellido1 = doctorDTO.Apellido1;
+            existingDoctor.Apellido2 = doctorDTO.Apellido2;
+            existingDoctor.ID_Especialidad = doctorDTO.ID_Especialidad;
+
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {existingDoctor.ID_Doctor}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.ID_Especialidad}");
+
+            _context.SaveChanges();
+
+            return NoContent();
         }
 
-        // DELETE api/<DoctorController>/5
+
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult EliminarDoctor(int id)
         {
-            _context.Database.ExecuteSql($"SP_EliminarDoctor {id}");
+            // Verifica si existe el doctor con el ID proporcionado
+            var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
+
+            if (existingDoctor == null)
+            {
+                // No encontrado
+                return NotFound();
+            }
+
+            // Ejecuta el Stored Procedure para eliminar el doctor
+            _context.Database.ExecuteSqlInterpolated($"SP_EliminarDoctor {id}");
+
+            return NoContent();
         }
+
     }
 }
