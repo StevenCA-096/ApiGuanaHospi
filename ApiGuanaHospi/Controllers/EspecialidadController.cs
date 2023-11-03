@@ -1,4 +1,5 @@
 ﻿using DataAccess.Context;
+using DataAccess.DTO;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,40 +19,84 @@ namespace ApiGuanaHospi.Controllers
             _context = context;
         }
 
-        // GET: api/<EspecialidadController>
         [HttpGet]
-        public List<Especialidad> Get()
+        public List<Especialidad> GetAllEspecialidad()
         {
-            return _context.especialidad.FromSqlRaw("SP_ObtenerEspecialidades").ToList();
+            var especialidades = _context.especialidad
+                // Llamando al sp de la db usando FromSqlInterpolated
+                .FromSqlInterpolated($"EXEC SP_ObtenerEspecialidades")
+                .ToList();
+
+            return especialidades;
         }
 
-        // GET api/<EspecialidadController>/5
+
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult GetEspecialidadById(int id)
         {
-            return "value";
+            var especialidad = _context.especialidad
+            .FromSqlInterpolated($"EXEC SP_ObtenerEspecialidadPorId {id}")
+            .AsEnumerable()
+            .SingleOrDefault();
+
+            if (especialidad == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(especialidad);
         }
 
-        // POST api/<EspecialidadController>
         [HttpPost]
-        public Especialidad Post([FromBody] Especialidad especialidad)
+        public IActionResult PostEnfermedad(EspecialidadDto especialidadDto)
         {
-            var res = _context.Database.ExecuteSql($"SP_InsertarEspecialidad {especialidad.NombreE}");
-            return especialidad;
+            // objeto Doctor a partir del DTO
+            var especialidad = new Especialidad
+            {
+                //ID_Doctor = doctorDTO.ID_Doctor,
+                NombreE = especialidadDto.NombreE,
+
+            };
+
+            _context.Database.ExecuteSqlInterpolated($"SP_InsertarEspecialidad {especialidad.NombreE}");
+
+            return Ok("Especialidad creada exitosamente");
         }
 
-        // PUT api/<EspecialidadController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string nuevoNombre)
+        public IActionResult PutEspecialidad(int id, [FromBody] EspecialidadDto especialidadDto)
         {
-            _context.Database.ExecuteSql($"SP_ActualizarEspecialidad {id},{nuevoNombre}");
+            var existingEspecialidad = _context.especialidad.FirstOrDefault(d => d.ID_Especialidad == id);
+
+            if (existingEspecialidad == null)
+            {
+                return NotFound();
+            }
+
+            existingEspecialidad.NombreE = especialidadDto.NombreE;
+
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarEspecialidad {id}, {existingEspecialidad.NombreE}");
+
+            _context.SaveChanges();
+
+            return NoContent();
         }
 
-        // DELETE api/<EspecialidadController>/5
+
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult DeleteEspecialidad(int id)
         {
-            _context.Database.ExecuteSql($"SP_EliminarEspecialidad {id}");
+            var existingEspecialidad = _context.especialidad.FirstOrDefault(d => d.ID_Especialidad == id);
+
+            if (existingEspecialidad == null)
+            {
+                // No encontrado
+                return NotFound();
+            }
+
+            _context.Database.ExecuteSqlInterpolated($"SP_EliminarEspecialidad {id}");
+
+            return NoContent();
         }
     }
 }
