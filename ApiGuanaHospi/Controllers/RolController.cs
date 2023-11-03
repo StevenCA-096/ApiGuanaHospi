@@ -17,15 +17,31 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpGet]
-        public List<Rol> Get()
+        public List<Rol> GetAllRol()
         {
-            return _context.rol.FromSqlRaw("SP_ObtenerRoles").ToList();
+            var roles = _context.rol
+                .FromSqlInterpolated($"EXEC SP_ObtenerRoles")
+                .ToList();
+
+
+
+            return roles;
         }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult GetRolById(int id)
         {
-            return "value";
+            var rol = _context.rol
+        .FromSqlInterpolated($"EXEC SP_ObtenerRolPorID {id}")
+        .AsEnumerable()
+        .SingleOrDefault();
+
+            if (rol == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(rol);
         }
 
         [HttpPost]
