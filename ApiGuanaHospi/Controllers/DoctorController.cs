@@ -48,7 +48,6 @@ namespace ApiGuanaHospi.Controllers
             return doctores;
         }
 
-
         [HttpGet("{id}")]
         public IActionResult GetDoctorById(int id)
         {
@@ -116,7 +115,6 @@ namespace ApiGuanaHospi.Controllers
 
             return NoContent();
         }
-
 
         [HttpDelete("{id}")]
         public IActionResult EliminarDoctor(int id)

@@ -30,7 +30,6 @@ namespace ApiGuanaHospi.Controllers
             return especialidades;
         }
 
-
         [HttpGet("{id}")]
         public IActionResult GetEspecialidadById(int id)
         {
@@ -50,10 +49,8 @@ namespace ApiGuanaHospi.Controllers
         [HttpPost]
         public IActionResult PostEnfermedad(EspecialidadDto especialidadDto)
         {
-            // objeto Doctor a partir del DTO
             var especialidad = new Especialidad
             {
-                //ID_Doctor = doctorDTO.ID_Doctor,
                 NombreE = especialidadDto.NombreE,
 
             };
@@ -81,7 +78,6 @@ namespace ApiGuanaHospi.Controllers
 
             return NoContent();
         }
-
 
         [HttpDelete("{id}")]
         public IActionResult DeleteEspecialidad(int id)

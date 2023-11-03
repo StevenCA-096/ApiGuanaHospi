@@ -4,8 +4,6 @@ using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ApiGuanaHospi.Controllers
 {
     [Route("api/[controller]")]
@@ -18,7 +16,6 @@ namespace ApiGuanaHospi.Controllers
             _context = context;
         }
 
-
         [HttpGet]
         public List<Enfermedad> GetAllEnfermedad()
         {
@@ -29,7 +26,6 @@ namespace ApiGuanaHospi.Controllers
 
             return enfermedades;
         }
-
 
         [HttpGet("{id}")]
         public IActionResult GetEnfermedadById(int id)
@@ -50,10 +46,8 @@ namespace ApiGuanaHospi.Controllers
         [HttpPost]
         public IActionResult PostEnfermedad(EnfermedadDto enfermedadPostDto)
         {
-            // objeto Doctor a partir del DTO
             var enfermedad = new Enfermedad
             {
-                //ID_Doctor = doctorDTO.ID_Doctor,
                 Nombre = enfermedadPostDto.Nombre,
 
             };
@@ -81,7 +75,6 @@ namespace ApiGuanaHospi.Controllers
 
             return NoContent();
         }
-
 
         [HttpDelete("{id}")]
         public IActionResult DeleteEnfermedad(int id)

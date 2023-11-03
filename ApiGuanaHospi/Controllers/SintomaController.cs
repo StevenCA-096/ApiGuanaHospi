@@ -1,10 +1,9 @@
 ﻿using DataAccess.Context;
+using DataAccess.DTO;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlTypes;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ApiGuanaHospi.Controllers
 {
@@ -17,40 +16,82 @@ namespace ApiGuanaHospi.Controllers
         public SintomaController(GuanaHospiContext context) { 
             _context = context;
         }
-        // GET: api/<SintomaController>
+
         [HttpGet]
-        public List<Sintoma> Get()
+        public List<Sintoma> GetAllSintoma()
         {
-            return _context.sintoma.FromSqlInterpolated($"SP_ObtenerSintomas").ToList();
+            var sintomas = _context.sintoma
+                // Llamando al sp de la db usando FromSqlInterpolated
+                .FromSqlInterpolated($"EXEC SP_ObtenerSintomas")
+                .ToList();
+
+            return sintomas;
         }
 
-        // GET api/<SintomaController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult GetSintomaById(int id)
         {
-            return "value";
+            var sintoma = _context.sintoma
+            .FromSqlInterpolated($"EXEC SP_ObtenerSintomaPorId {id}")
+            .AsEnumerable()
+            .SingleOrDefault();
+
+            if (sintoma == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(sintoma);
         }
 
-        // POST api/<SintomaController>
         [HttpPost]
-        public void Post([FromBody] Sintoma sintoma)
+        public IActionResult PostSintoma(SintomaDto sintomaDto)
         {
-            
-            _context.Database.ExecuteSql($"execute SP_InsertarSintoma {sintoma.Nombre.Trim()}");
+            var sintoma = new Sintoma
+            {
+                Nombre = sintomaDto.Nombre,
+
+            };
+
+            _context.Database.ExecuteSqlInterpolated($"SP_InsertarSintoma {sintoma.Nombre}");
+
+            return Ok("Sintoma creado exitosamente");
         }
 
-        // PUT api/<SintomaController>/5
-        [HttpPut]
-        public void Put([FromBody] Sintoma sintoma)
+        [HttpPut("{id}")]
+        public IActionResult PutSintoma(int id, [FromBody] SintomaDto sintomaDto)
         {
-            _context.Database.ExecuteSql($"SP_ActualizarSintoma {sintoma.ID_Sintoma},{sintoma.Nombre.Trim()}");
+            var existingSintoma = _context.sintoma.FirstOrDefault(d => d.ID_Sintoma == id);
+
+            if (existingSintoma == null)
+            {
+                return NotFound();
+            }
+
+            existingSintoma.Nombre = sintomaDto.Nombre;
+
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarSintoma {id}, {existingSintoma.Nombre}");
+
+            _context.SaveChanges();
+
+            return NoContent();
         }
 
-        // DELETE api/<SintomaController>/5
+
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult DeleteSintoma(int id)
         {
-            _context.Database.ExecuteSql($"SP_EliminarSintoma {id}");
+            var existingSintoma = _context.sintoma.FirstOrDefault(d => d.ID_Sintoma == id);
+
+            if (existingSintoma == null)
+            {
+                // No encontrado
+                return NotFound();
+            }
+
+            _context.Database.ExecuteSqlInterpolated($"SP_EliminarSintoma {id}");
+
+            return NoContent();
         }
     }
 }
