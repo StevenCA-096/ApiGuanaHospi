@@ -23,10 +23,14 @@ namespace DataAccess.Context
         public DbSet<Enfermedad> enfermedad { get; set; } = default!;
         public DbSet<Usuario> usuario { get; set; } = default!;
         public DbSet<Rol> rol { get; set; } = default!;
-
+        public DbSet<Unidad> unidad { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Unidad>().HasKey(u => u.ID_Unidad);
+            modelBuilder.Entity<Unidad>().HasOne(u => u.Doctor).WithMany(d => d.unidad);
+            modelBuilder.Entity<Doctor>().HasMany(d => d.unidad).WithOne(u=>u.Doctor);
+
             modelBuilder.Entity<Especialidad>().HasKey(e => e.ID_Especialidad);
 
             modelBuilder.Entity<Sintoma>().HasKey(s => s.ID_Sintoma);
