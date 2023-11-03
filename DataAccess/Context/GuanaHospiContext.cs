@@ -27,9 +27,23 @@ namespace DataAccess.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //relaciones de Doctor y Unidad
             modelBuilder.Entity<Unidad>().HasKey(u => u.ID_Unidad);
-            modelBuilder.Entity<Unidad>().HasOne(u => u.Doctor).WithMany(d => d.unidad);
             modelBuilder.Entity<Doctor>().HasMany(d => d.unidad).WithOne(u=>u.Doctor);
+
+            //indicamos que la tabla doctor tiene una fk de la tabla especialidad que es su pk en dicha tabla
+            modelBuilder.Entity<Doctor>()
+                .HasOne(d => d.especialidad)
+                .WithMany(e => e.doctores)
+                .HasForeignKey(d => d.ID_Especialidad);
+
+            //indicar por aca la fk de doctor en unidad o por el modelo (cualquiera de las 2 funciona)
+            modelBuilder.Entity<Unidad>()
+                .HasOne(d => d.Doctor)
+                .WithMany(e => e.unidad)
+                .HasForeignKey(d => d.Id_Doctor);
+                
+            //
 
             modelBuilder.Entity<Especialidad>().HasKey(e => e.ID_Especialidad);
 
@@ -41,12 +55,6 @@ namespace DataAccess.Context
             modelBuilder.Entity<Usuario>().HasKey(u => u.Id_Usuario);
 
             modelBuilder.Entity<Rol>().HasKey(r => r.Id_Rol);
-
-            //indicamos que la tabla doctor tiene una fk de la tabla especialidad que es su pk en dicha tabla
-            modelBuilder.Entity<Doctor>()
-                .HasOne(d => d.especialidad)
-                .WithMany(e => e.doctores)
-                .HasForeignKey(d => d.ID_Especialidad);
 
             modelBuilder.Entity<Usuario>()
                 .HasOne(f => f.rol)

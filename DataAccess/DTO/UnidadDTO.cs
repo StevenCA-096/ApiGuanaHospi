@@ -12,6 +12,6 @@ namespace DataAccess.DTO
         public int Codigo { get; set; }
         public string Nombre { get; set; }
         public int Planta { get; set; }
-        public int FID_Doctor { get; set; }
+        public int ID_Doctor { get; set; }
     }
 }

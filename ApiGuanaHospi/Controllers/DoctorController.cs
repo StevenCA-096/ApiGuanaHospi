@@ -20,7 +20,7 @@ namespace ApiGuanaHospi.Controllers
         //public List<Doctor> Get()
         //{
         //    var doctores = _context.doctor
-                   //colocando la instruccion sql desde la funcion
+        //colocando la instruccion sql desde la funcion
         //        .FromSqlRaw("SELECT d.ID_Doctor, d.Codigo, d.NombreD, d.Apellido1, d.Apellido2, d.ID_Especialidad, e.NombreE as NombreEspecialidad FROM Doctor d INNER JOIN Especialidad e ON e.ID_Especialidad = d.ID_Especialidad")
         //        .Include(d => d.especialidad) 
         //        // evitar la carga en cascada
@@ -30,11 +30,28 @@ namespace ApiGuanaHospi.Controllers
         //    return doctores;
         //}
 
+        //[HttpGet]
+        //public List<Doctor> GetAllDoctor()
+        //{
+        //    var doctores = _context.doctor
+        //        // Llamando al sp de la db usando FromSqlInterpolated
+        //        .FromSqlInterpolated($"EXEC SP_ObtenerDoctores")
+        //        .ToList();
+
+        //    foreach (var doctor in doctores)
+        //    {
+        //        _context.Entry(doctor)
+        //            .Reference(d => d.especialidad)
+        //            .Load();
+        //    }
+
+        //    return doctores;
+        //}
+
         [HttpGet]
         public List<Doctor> GetAllDoctor()
         {
             var doctores = _context.doctor
-                // Llamando al sp de la db usando FromSqlInterpolated
                 .FromSqlInterpolated($"EXEC SP_ObtenerDoctores")
                 .ToList();
 
@@ -42,6 +59,10 @@ namespace ApiGuanaHospi.Controllers
             {
                 _context.Entry(doctor)
                     .Reference(d => d.especialidad)
+                    .Load();
+
+                _context.Entry(doctor)
+                    .Collection(d => d.unidad)
                     .Load();
             }
 
