@@ -61,7 +61,7 @@ namespace ApiGuanaHospi.Controllers
             {
                 return NotFound();
             }
-
+             
 
             if (doctor != null)
             {
@@ -95,7 +95,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult ActualizarDoctor(int id, [FromBody] DoctorUpdateDTO doctorDTO)
+        public IActionResult ActualizarDoctor(int id, [FromBody] DoctorDto doctorDTO)
         {
             var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
 
@@ -110,7 +110,7 @@ namespace ApiGuanaHospi.Controllers
             existingDoctor.Apellido2 = doctorDTO.Apellido2;
             existingDoctor.ID_Especialidad = doctorDTO.ID_Especialidad;
 
-            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {existingDoctor.ID_Doctor}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.ID_Especialidad}");
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.ID_Especialidad}");
 
             _context.SaveChanges();
 

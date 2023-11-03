@@ -1,4 +1,5 @@
 ﻿using DataAccess.Context;
+using DataAccess.DTO;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,39 +17,86 @@ namespace ApiGuanaHospi.Controllers
         public EnfermedadController(GuanaHospiContext context) {
             _context = context;
         }
-        // GET: api/<EnfermedadController>
+
+
         [HttpGet]
-        public List<Enfermedad> Get()
+        public List<Enfermedad> GetAllEnfermedad()
         {
-            return _context.enfermedad.FromSqlRaw($"SP_ObtenerEnfermedades").ToList();
+            var enfermedades = _context.enfermedad
+                // Llamando al sp de la db usando FromSqlInterpolated
+                .FromSqlInterpolated($"EXEC SP_ObtenerEnfermedades")
+                .ToList();
+
+            return enfermedades;
         }
 
-        // GET api/<EnfermedadController>/5
+
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult GetEnfermedadById(int id)
         {
-            return "value";
+            var enfermedad = _context.enfermedad
+            .FromSqlInterpolated($"EXEC SP_ObtenerEnfermedadPorId {id}")
+            .AsEnumerable()
+            .SingleOrDefault();
+
+            if (enfermedad == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(enfermedad);
         }
 
-        // POST api/<EnfermedadController>
         [HttpPost]
-        public void Post([FromBody] Enfermedad enfermedad)
+        public IActionResult PostEnfermedad(EnfermedadDto enfermedadPostDto)
         {
-            _context.Database.ExecuteSql($"SP_InsertarEnfermedad {enfermedad.Nombre}");
+            // objeto Doctor a partir del DTO
+            var enfermedad = new Enfermedad
+            {
+                //ID_Doctor = doctorDTO.ID_Doctor,
+                Nombre = enfermedadPostDto.Nombre,
+
+            };
+
+            _context.Database.ExecuteSqlInterpolated($"SP_InsertarEnfermedad {enfermedad.Nombre}");
+
+            return Ok("Enfermedad creada exitosamente");
         }
 
-        // PUT api/<EnfermedadController>/5
-        [HttpPut]
-        public void Put([FromBody] Enfermedad enfermedad)
+        [HttpPut("{id}")]
+        public IActionResult PutEnfermedad(int id, [FromBody] EnfermedadDto enfermedadDto)
         {
-            _context.Database.ExecuteSql($"SP_ActualizarEnfermedad {enfermedad.Id_Enfermedad}, {enfermedad.Nombre}");
+            var existingEnfermedad = _context.enfermedad.FirstOrDefault(d => d.Id_Enfermedad == id);
+
+            if (existingEnfermedad == null)
+            {
+                return NotFound();
+            }
+
+            existingEnfermedad.Nombre = enfermedadDto.Nombre;
+   
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarEnfermedad {id}, {existingEnfermedad.Nombre}");
+
+            _context.SaveChanges();
+
+            return NoContent();
         }
 
-        // DELETE api/<EnfermedadController>/5
+
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult DeleteEnfermedad(int id)
         {
-            _context.Database.ExecuteSql($"SP_EliminarEnfermedad {id}");
+            var existingEnfermedad = _context.enfermedad.FirstOrDefault(d => d.Id_Enfermedad == id);
+
+            if (existingEnfermedad == null)
+            {
+                // No encontrado
+                return NotFound();
+            }
+
+            _context.Database.ExecuteSqlInterpolated($"SP_EliminarEnfermedad {id}");
+
+            return NoContent();
         }
     }
 }
