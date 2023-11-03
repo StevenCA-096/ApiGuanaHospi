@@ -23,6 +23,8 @@ namespace ApiGuanaHospi.Controllers
                 .FromSqlInterpolated($"EXEC SP_ObtenerRoles")
                 .ToList();
 
+
+
             return roles;
         }
 
@@ -59,7 +61,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpPut("{id}")]
         public IActionResult ActualizarRol(int id, [FromBody] RolUpdateDTO RolDTO)
         {
-            var existingRol = _context.rol.FirstOrDefault(r => r.ID_Rol == id);
+            var existingRol = _context.rol.FirstOrDefault(r => r.ID_rol == id);
 
             if (existingRol == null)
             {
@@ -68,7 +70,7 @@ namespace ApiGuanaHospi.Controllers
 
             existingRol.NombreR = RolDTO.NombreR;
 
-            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarRol {existingRol.NombreR}");
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarRol {id}, {existingRol.NombreR}");
 
             _context.SaveChanges();
 
@@ -79,7 +81,7 @@ namespace ApiGuanaHospi.Controllers
         public IActionResult EliminarRol(int id)
         {
 
-            var existingRol = _context.rol.FirstOrDefault(r => r.ID_Rol == id);
+            var existingRol = _context.rol.FirstOrDefault(r => r.ID_rol == id);
 
             if (existingRol == null)
             {

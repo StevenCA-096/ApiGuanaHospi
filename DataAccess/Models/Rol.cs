@@ -9,7 +9,7 @@ namespace DataAccess.Models
 {
     public class Rol
     {
-        public int ID_Rol { get; set; }
+        public int ID_rol { get; set; }
         public string NombreR { get; set; }
 
         [JsonIgnore]
