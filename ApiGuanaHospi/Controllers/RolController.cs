@@ -31,7 +31,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpPost]
         public Rol Post([FromBody] Rol rol)
         {
-            var res = _context.Database.ExecuteSql($"SP_InsertarRol {rol.NombreR}");
+            var res = _context.Database.ExecuteSql($"SP_InsertarRol {rol.Nombre}");
             return rol;
         }
 
