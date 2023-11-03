@@ -36,7 +36,7 @@ namespace DataAccess.Context
 
             modelBuilder.Entity<Usuario>().HasKey(u => u.Id_Usuario);
 
-            modelBuilder.Entity<Rol>().HasKey(r => r.Id_Rol);
+            modelBuilder.Entity<Rol>().HasKey(r => r.ID_Rol);
 
             //indicamos que la tabla doctor tiene una fk de la tabla especialidad que es su pk en dicha tabla
             modelBuilder.Entity<Doctor>()
