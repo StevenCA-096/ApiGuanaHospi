@@ -3,6 +3,7 @@ using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Services.IRepository;
 using System.Data;
 
 namespace ApiGuanaHospi.Controllers
@@ -11,28 +12,36 @@ namespace ApiGuanaHospi.Controllers
     [ApiController]
     public class AuthenticationController : Controller
     {
-        private readonly GuanaHospiContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public AuthenticationController(GuanaHospiContext context)
+        public AuthenticationController(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
+
+        }
+
+        [HttpGet("GetchangePasswordToken")]
+        public string Get(string email)
+        {
+            return _userRepository.getChangePasswordToken(email);
         }
 
         [HttpGet("Login")]
-        public async Task<object> Login(string email, string password)
+        public Task<object> Login(string email, string password)
         {
-            var usuario = new Usuario();
-            var rol = new Rol();
-            var usuarios = _context.usuario
-                .FromSqlRaw("sp_Login", email, password);
-            var resultado = ("sp_Login", email, password);
+            return _userRepository.Login(email, password);
+        }
+        [HttpGet("getLoginInfo")]
 
-            // Agregar la información del usuario a la respuesta
-            resultado.Result["idUsuario"] = usuarios.Id_Usuario;
-            resultado.Result["idRol"] = usuarios.ID_Rol;
-            resultado.Result["rolNombre"] = usuarios.Nombre;
+        public async Task<object> getLoginInfo(string email, string password)
+        {
+            return await _userRepository.getLoginInfo(email, password);
+        }
 
-            return resultado;
+        [HttpPut("ChangePassword")]
+        public string Get(string email, string newPassword)
+        {
+            return _userRepository.ChangePassword(email, newPassword);
         }
     }
 }
