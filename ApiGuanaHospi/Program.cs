@@ -1,5 +1,10 @@
+using AutoMapper;
 using DataAccess;
+using DataAccess.DTO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.SqlServer.Server;
+using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +46,39 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
 
+});
+
+var configuration = new MapperConfiguration(cfg =>
+{
+    cfg.AddProfile<UsuarioMapper>();
+});
+var mapper = configuration.CreateMapper();
+
+builder.Services.AddSingleton(mapper);
+
+//JWT Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("the secret key that is going to be used")),
+        ValidateIssuer = false,
+        ValidIssuer = "test",
+        ValidateAudience = false,
+        ValidAudience = "test",
+        RequireExpirationTime = false,
+        ValidateLifetime = false,
+        ClockSkew = TimeSpan.FromDays(1),
+    };
 });
 
 var app = builder.Build();
