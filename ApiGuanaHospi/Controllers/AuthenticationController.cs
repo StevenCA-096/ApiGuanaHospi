@@ -28,9 +28,9 @@ namespace ApiGuanaHospi.Controllers
             var resultado = ("sp_Login", email, password);
 
             // Agregar la información del usuario a la respuesta
-            resultado.Result["idUsuario"] = Usuario.Id_Usuario;
-            resultado.Result["idRol"] = Usuario.ID_Rol;
-            resultado.Result["rolNombre"] = Rol.Nombre;
+            resultado.Result["idUsuario"] = usuarios.Id_Usuario;
+            resultado.Result["idRol"] = usuarios.ID_Rol;
+            resultado.Result["rolNombre"] = usuarios.Nombre;
 
             return resultado;
         }
