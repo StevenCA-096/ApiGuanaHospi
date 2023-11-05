@@ -30,24 +30,6 @@ namespace ApiGuanaHospi.Controllers
         //    return doctores;
         //}
 
-        //[HttpGet]
-        //public List<Doctor> GetAllDoctor()
-        //{
-        //    var doctores = _context.doctor
-        //        // Llamando al sp de la db usando FromSqlInterpolated
-        //        .FromSqlInterpolated($"EXEC SP_ObtenerDoctores")
-        //        .ToList();
-
-        //    foreach (var doctor in doctores)
-        //    {
-        //        _context.Entry(doctor)
-        //            .Reference(d => d.especialidad)
-        //            .Load();
-        //    }
-
-        //    return doctores;
-        //}
-
         [HttpGet]
         public List<Doctor> GetAllDoctor()
         {
@@ -87,6 +69,10 @@ namespace ApiGuanaHospi.Controllers
             {
                 _context.Entry(doctor)
                     .Reference(d => d.especialidad)
+                    .Load();
+
+                _context.Entry(doctor)
+                    .Collection(d => d.unidad)
                     .Load();
             }
 
