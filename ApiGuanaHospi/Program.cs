@@ -4,6 +4,8 @@ using DataAccess.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.SqlServer.Server;
+using Services.IRepository;
+using Services.Repository;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -55,6 +57,8 @@ var configuration = new MapperConfiguration(cfg =>
 var mapper = configuration.CreateMapper();
 
 builder.Services.AddSingleton(mapper);
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 //JWT Authentication
 builder.Services.AddAuthentication(options =>
