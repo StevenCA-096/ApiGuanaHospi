@@ -36,7 +36,7 @@ namespace Services.Repository
                 string result = string.Empty;
                 byte[] encryted = System.Text.Encoding.Unicode.GetBytes(password);
                 result = Convert.ToBase64String(encryted);
-                if (userFound.Contra == result)
+                if (userFound.Contra == password)
                 {
                     var tokenKey = Encoding.UTF8.GetBytes("the secret key that is going to be used"); //IConfiguration["JWT:Key"]
                     var tokenDescriptor = new SecurityTokenDescriptor

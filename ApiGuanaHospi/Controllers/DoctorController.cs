@@ -4,6 +4,7 @@ using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 using System.Text;
 
 namespace ApiGuanaHospi.Controllers
@@ -85,37 +86,24 @@ namespace ApiGuanaHospi.Controllers
         public IActionResult CrearDoctor(DoctorDto doctorDTO)
         {
             // objeto Doctor a partir del DTO
-            var usuario = new Usuario();
-            using (SqlConnection connection = new SqlConnection("Server=DESKTOP-HQ5LO9D;Database=Guana_HospiDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"))
             {
-                connection.Open();
-
-                int idUsuario = 5;
-                byte[] contextInfo = BitConverter.GetBytes(idUsuario);
-
-                using (SqlCommand command = new SqlCommand("SET CONTEXT_INFO @ContextInfo", connection))
-                {
-                    command.Parameters.AddWithValue("@ContextInfo", contextInfo);
-                    command.ExecuteNonQuery();
-                }
-
                 var doctor = new Doctor
-            {
-                //ID_Doctor = doctorDTO.ID_Doctor,
-                Codigo = doctorDTO.Codigo,
-                NombreD = doctorDTO.NombreD,
-                Apellido1 = doctorDTO.Apellido1,
-                Apellido2 = doctorDTO.Apellido2,
-                ID_Especialidad = doctorDTO.ID_Especialidad,
-                //null para no pasar nada al objeto de la relacion 
-                especialidad = null 
-            };
+                {
+                    //ID_Doctor = doctorDTO.ID_Doctor,
+                    Codigo = doctorDTO.Codigo,
+                    NombreD = doctorDTO.NombreD,
+                    Apellido1 = doctorDTO.Apellido1,
+                    Apellido2 = doctorDTO.Apellido2,
+                    ID_Especialidad = doctorDTO.ID_Especialidad,
+                    //null para no pasar nada al objeto de la relacion 
+                    especialidad = null
+                };
 
-            _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
+                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
 
                 return Ok("Doctor creado exitosamente");
+            }
         }
-       }
 
         [HttpPut("{id}")]
             public IActionResult ActualizarDoctor(int id, [FromBody] DoctorDto doctorDTO)
