@@ -2,7 +2,10 @@
 using DataAccess.DTO;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
+using System.Text;
 
 namespace ApiGuanaHospi.Controllers
 {
@@ -83,63 +86,65 @@ namespace ApiGuanaHospi.Controllers
         public IActionResult CrearDoctor(DoctorDto doctorDTO)
         {
             // objeto Doctor a partir del DTO
-            var doctor = new Doctor
             {
-                //ID_Doctor = doctorDTO.ID_Doctor,
-                Codigo = doctorDTO.Codigo,
-                NombreD = doctorDTO.NombreD,
-                Apellido1 = doctorDTO.Apellido1,
-                Apellido2 = doctorDTO.Apellido2,
-                ID_Especialidad = doctorDTO.ID_Especialidad,
-                //null para no pasar nada al objeto de la relacion 
-                especialidad = null 
-            };
+                var doctor = new Doctor
+                {
+                    //ID_Doctor = doctorDTO.ID_Doctor,
+                    Codigo = doctorDTO.Codigo,
+                    NombreD = doctorDTO.NombreD,
+                    Apellido1 = doctorDTO.Apellido1,
+                    Apellido2 = doctorDTO.Apellido2,
+                    ID_Especialidad = doctorDTO.ID_Especialidad,
+                    //null para no pasar nada al objeto de la relacion 
+                    especialidad = null
+                };
 
-            _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
+                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
 
-            return Ok("Doctor creado exitosamente");
+                return Ok("Doctor creado exitosamente");
+            }
         }
 
         [HttpPut("{id}")]
-        public IActionResult ActualizarDoctor(int id, [FromBody] DoctorDto doctorDTO)
-        {
-            var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
-
-            if (existingDoctor == null)
+            public IActionResult ActualizarDoctor(int id, [FromBody] DoctorDto doctorDTO)
             {
-                return NotFound();
+                var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
+
+                if (existingDoctor == null)
+                {
+                    return NotFound();
+                }
+
+                existingDoctor.Codigo = doctorDTO.Codigo;
+                existingDoctor.NombreD = doctorDTO.NombreD;
+                existingDoctor.Apellido1 = doctorDTO.Apellido1;
+                existingDoctor.Apellido2 = doctorDTO.Apellido2;
+                existingDoctor.ID_Especialidad = doctorDTO.ID_Especialidad;
+
+                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.ID_Especialidad}");
+
+                _context.SaveChanges();
+
+                return NoContent();
             }
 
-            existingDoctor.Codigo = doctorDTO.Codigo;
-            existingDoctor.NombreD = doctorDTO.NombreD;
-            existingDoctor.Apellido1 = doctorDTO.Apellido1;
-            existingDoctor.Apellido2 = doctorDTO.Apellido2;
-            existingDoctor.ID_Especialidad = doctorDTO.ID_Especialidad;
-
-            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.ID_Especialidad}");
-
-            _context.SaveChanges();
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult EliminarDoctor(int id)
-        {
-            // Verifica si existe el doctor con el ID proporcionado
-            var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
-
-            if (existingDoctor == null)
+            [HttpDelete("{id}")]
+            public IActionResult EliminarDoctor(int id)
             {
-                // No encontrado
-                return NotFound();
+                // Verifica si existe el doctor con el ID proporcionado
+                var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
+
+                if (existingDoctor == null)
+                {
+                    // No encontrado
+                    return NotFound();
+                }
+
+                // Ejecuta el Stored Procedure para eliminar el doctor
+                _context.Database.ExecuteSqlInterpolated($"SP_EliminarDoctor {id}");
+
+                return NoContent();
             }
-
-            // Ejecuta el Stored Procedure para eliminar el doctor
-            _context.Database.ExecuteSqlInterpolated($"SP_EliminarDoctor {id}");
-
-            return NoContent();
-        }
 
     }
 }

@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGuanaHospi", "ApiGuanaHospi.csproj", "{58106CDF-BD3E-497F-BAB3-7ECECC99DC55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiGuanaHospi", "ApiGuanaHospi.csproj", "{58106CDF-BD3E-497F-BAB3-7ECECC99DC55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "..\DataAccess\DataAccess.csproj", "{ADA8A80F-E3A9-4683-B75A-6F75AB6923EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "..\DataAccess\DataAccess.csproj", "{ADA8A80F-E3A9-4683-B75A-6F75AB6923EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "..\Services\Services.csproj", "{1CEFB6D7-66F3-48CF-B4DD-424AC55F1DFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{ADA8A80F-E3A9-4683-B75A-6F75AB6923EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADA8A80F-E3A9-4683-B75A-6F75AB6923EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADA8A80F-E3A9-4683-B75A-6F75AB6923EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CEFB6D7-66F3-48CF-B4DD-424AC55F1DFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CEFB6D7-66F3-48CF-B4DD-424AC55F1DFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CEFB6D7-66F3-48CF-B4DD-424AC55F1DFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CEFB6D7-66F3-48CF-B4DD-424AC55F1DFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

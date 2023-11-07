@@ -17,34 +17,80 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpGet]
-        public List<Rol> Get()
+        public List<Rol> GetAllRol()
         {
-            return _context.rol.FromSqlRaw("SP_ObtenerRoles").ToList();
+            var roles = _context.rol
+                .FromSqlInterpolated($"EXEC SP_ObtenerRoles")
+                .ToList();
+
+
+
+            return roles;
         }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult GetRolById(int id)
         {
-            return "value";
+            var rol = _context.rol
+        .FromSqlInterpolated($"EXEC SP_ObtenerRolPorID {id}")
+        .AsEnumerable()
+        .SingleOrDefault();
+
+            if (rol == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(rol);
         }
 
         [HttpPost]
-        public Rol Post([FromBody] Rol rol)
+        public IActionResult CrearRol(RolDto rolDTO)
         {
-            var res = _context.Database.ExecuteSql($"SP_InsertarRol {rol.NombreR}");
-            return rol;
-        }
 
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-            _context.Database.ExecuteSql($"SP_EliminarRol {id}");
+            var rol = new Rol
+            {
+                Nombre = rolDTO.NombreR
+            };
+
+            _context.Database.ExecuteSqlInterpolated($"SP_InsertarRol {rol.Nombre}");
+
+            return Ok("Rol creado exitosamente");
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string nuevoNombre)
+        public IActionResult ActualizarRol(int id, [FromBody] RolUpdateDTO RolDTO)
         {
-            _context.Database.ExecuteSql($"SP_ActualizarRol {id},{nuevoNombre}");
+            var existingRol = _context.rol.FirstOrDefault(r => r.Id_Rol == id);
+
+            if (existingRol == null)
+            {
+                return NotFound();
+            }
+
+            existingRol.Nombre = RolDTO.NombreR;
+
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarRol {id}, {existingRol.Nombre}");
+
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult EliminarRol(int id)
+        {
+
+            var existingRol = _context.rol.FirstOrDefault(r => r.Id_Rol == id);
+
+            if (existingRol == null)
+            {
+                return NotFound();
+            }
+
+            _context.Database.ExecuteSqlInterpolated($"SP_EliminarRol {id}");
+
+            return NoContent();
         }
     }
 }
