@@ -80,9 +80,12 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPost]
-        public IActionResult CrearDoctor(DoctorDto doctorDTO)
+        public IActionResult CrearDoctor(int id,DoctorDto doctorDTO)
         {
-            // objeto Doctor a partir del DTO
+            _context.Database.OpenConnection();
+
+            _context.Database.ExecuteSqlRaw($"exec SP_Contexto ${id}");
+    // objeto Doctor a partir del DTO
             var doctor = new Doctor
             {
                 //ID_Doctor = doctorDTO.ID_Doctor,
@@ -97,6 +100,7 @@ namespace ApiGuanaHospi.Controllers
 
             _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
 
+            _context.Database.CloseConnection();
             return Ok("Doctor creado exitosamente");
         }
 
