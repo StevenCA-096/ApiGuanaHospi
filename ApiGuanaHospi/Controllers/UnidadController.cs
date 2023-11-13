@@ -65,7 +65,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostUnidad(UnidadDTO unidadDTO)
+        public IActionResult PostUnidad([FromBody] UnidadDTO unidadDTO)
         {
             var unidad = new Unidad
             {
@@ -81,6 +81,24 @@ namespace ApiGuanaHospi.Controllers
 
             return Ok("Unidad creada exitosamente");
         }
+
+        //[HttpPost]
+        //public IActionResult DesasignarDoctorDeUnidad(int unidadId)
+        //{
+        //    var unidad = _context.unidad.FirstOrDefault(u => u.ID_Unidad == unidadId);
+
+        //    if (unidad != null)
+        //    {
+        //        unidad.Id_Doctor = null;
+
+        //        _context.SaveChanges();
+
+        //        return Ok($"Médico desasignado de la unidad {unidadId} exitosamente");
+        //    }
+
+        //    return NotFound("No se encontró la unidad");
+        //}
+
 
         [HttpPut("{id}")]
         public IActionResult PutUnidad(int id, [FromBody] UnidadDTO unidadDTO)

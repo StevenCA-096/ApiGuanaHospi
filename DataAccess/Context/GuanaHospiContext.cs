@@ -24,6 +24,9 @@ namespace DataAccess.Context
         public DbSet<Usuario> usuario { get; set; } = default!;
         public DbSet<Rol> rol { get; set; } = default!;
         public DbSet<Unidad> unidad { get; set; } = default!;
+        public DbSet<Paciente> paciente { get; set; } = default!;
+        public DbSet<Intervencion> intervencion { get; set; } = default!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,7 +45,13 @@ namespace DataAccess.Context
                 .HasOne(d => d.Doctor)
                 .WithMany(e => e.unidad)
                 .HasForeignKey(d => d.Id_Doctor);
-                
+
+            //
+            modelBuilder.Entity<Paciente>().HasKey(p => p.ID_Paciente);
+
+            //
+            modelBuilder.Entity<Intervencion>().HasKey(p => p.ID_Intervencion);
+
             //
 
             modelBuilder.Entity<Especialidad>().HasKey(e => e.ID_Especialidad);

@@ -45,7 +45,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostSintoma(SintomaDto sintomaDto)
+        public IActionResult PostSintoma([FromBody] SintomaDto sintomaDto)
         {
             var sintoma = new Sintoma
             {

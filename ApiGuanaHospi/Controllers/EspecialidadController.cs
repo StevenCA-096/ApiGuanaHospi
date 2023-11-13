@@ -47,7 +47,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostEnfermedad(EspecialidadDto especialidadDto)
+        public IActionResult PostEnfermedad([FromBody] EspecialidadDto especialidadDto)
         {
             var especialidad = new Especialidad
             {

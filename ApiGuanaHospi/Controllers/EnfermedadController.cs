@@ -3,6 +3,7 @@ using DataAccess.DTO;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 
 namespace ApiGuanaHospi.Controllers
 {
@@ -16,50 +17,79 @@ namespace ApiGuanaHospi.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public List<Enfermedad> GetAllEnfermedad()
-        {
-            var enfermedades = _context.enfermedad
-                // Llamando al sp de la db usando FromSqlInterpolated
-                .FromSqlInterpolated($"EXEC SP_ObtenerEnfermedades")
-                .ToList();
 
-            return enfermedades;
+        [HttpGet]
+        public IActionResult GetAllEnfermedad()
+        {
+            try
+            {
+                var enfermedades = _context.enfermedad
+                    .FromSqlInterpolated($"EXEC SP_ObtenerEnfermedades")
+                    .ToList();
+
+                return Ok(enfermedades);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error interno -> " + ex.Message);
+            }
         }
+
 
         [HttpGet("{id}")]
         public IActionResult GetEnfermedadById(int id)
         {
-            var enfermedad = _context.enfermedad
-            .FromSqlInterpolated($"EXEC SP_ObtenerEnfermedadPorId {id}")
-            .AsEnumerable()
-            .SingleOrDefault();
-
-            if (enfermedad == null)
+            try
             {
-                return NotFound();
-            }
+                var enfermedad = _context.enfermedad
+                    .FromSqlInterpolated($"EXEC SP_ObtenerEnfermedadPorId {id}")
+                    .AsEnumerable()
+                    .SingleOrDefault();
 
-            return Ok(enfermedad);
+                if (enfermedad == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(enfermedad);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            }
         }
 
+
         [HttpPost]
-        public IActionResult PostEnfermedad(EnfermedadDto enfermedadPostDto)
+        public IActionResult PostEnfermedad([FromBody] EnfermedadDto enfermedadPostDto)
         {
+            try
+            {
+
             var enfermedad = new Enfermedad
             {
                 Nombre = enfermedadPostDto.Nombre,
-
             };
 
-            _context.Database.ExecuteSqlInterpolated($"SP_InsertarEnfermedad {enfermedad.Nombre}");
+            var result = _context.Database.ExecuteSqlInterpolated($"SP_InsertarEnfermedad {enfermedad.Nombre}");
 
-            return Ok("Enfermedad creada exitosamente");
+            return CreatedAtAction(nameof(GetEnfermedadById), new { id = enfermedad.Id_Enfermedad }, enfermedad);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al crear enfermedad. -> " + ex);
+            }
+
         }
+
 
         [HttpPut("{id}")]
         public IActionResult PutEnfermedad(int id, [FromBody] EnfermedadDto enfermedadDto)
         {
+            try
+            {
+
             var existingEnfermedad = _context.enfermedad.FirstOrDefault(d => d.Id_Enfermedad == id);
 
             if (existingEnfermedad == null)
@@ -68,28 +98,44 @@ namespace ApiGuanaHospi.Controllers
             }
 
             existingEnfermedad.Nombre = enfermedadDto.Nombre;
-   
-            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarEnfermedad {id}, {existingEnfermedad.Nombre}");
 
-            _context.SaveChanges();
+            var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarEnfermedad {id}, {existingEnfermedad.Nombre}");
 
-            return NoContent();
+           
+                return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                // Manejar el error según tus necesidades
+                return StatusCode(500, "Error al actualizar enfermdad. -> " + ex);
+            }
+
         }
+
 
         [HttpDelete("{id}")]
         public IActionResult DeleteEnfermedad(int id)
         {
+            try
+            {
+
             var existingEnfermedad = _context.enfermedad.FirstOrDefault(d => d.Id_Enfermedad == id);
 
             if (existingEnfermedad == null)
             {
-                // No encontrado
                 return NotFound();
             }
 
             _context.Database.ExecuteSqlInterpolated($"SP_EliminarEnfermedad {id}");
 
             return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al eliminar enfermadad. -> " + ex);
+            }
         }
     }
 }
