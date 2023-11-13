@@ -44,7 +44,7 @@ namespace ApiGuanaHospi.Controllers
             //objeto del DTO
             var usuario = new Usuario
             {
-                Correo = usuarioDTO.Correro,
+                Correo = usuarioDTO.Correo,
                 Contra = usuarioDTO.Contra,
                 ID_Rol = usuarioDTO.ID_Rol, 
                 rol = null
