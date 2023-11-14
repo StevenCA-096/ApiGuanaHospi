@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DataAccess.Models
 {
-    public class Enfermedad
+    public class Paciente
     {
-        public int Id_Enfermedad { get; set; }
+        public int ID_Paciente { get; set; }
+        public int NumSeguro { get; set; }
         public string Nombre { get; set; }
-        [JsonIgnore]
-        public List<Enfermedad_Sintoma>? enfermedad_Sintoma { get; set; }
+        public string Apellido1 { get; set; }
+        public string Apellido2 { get; set; }
+        public int Edad{ get; set; }
         public List<Intervencion>? intervenciones { get; set; }
     }
 }
