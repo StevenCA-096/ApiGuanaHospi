@@ -42,7 +42,7 @@ namespace DataAccess.Context
             modelBuilder.Entity<Doctor>()
                 .HasOne(d => d.especialidad)
                 .WithMany(e => e.doctores)
-                .HasForeignKey(d => d.iD_Especialidad);
+                .HasForeignKey(d => d.ID_Especialidad);
 
             //indicar por aca la fk de doctor en unidad o por el modelo (cualquiera de las 2 funciona)
             modelBuilder.Entity<Unidad>()
