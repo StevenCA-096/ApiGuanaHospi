@@ -144,15 +144,24 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpPut("{id}")]
-        public IActionResult ActualizarDoctor(int id, [FromBody] DoctorDto doctorDTO)
+        public IActionResult ActualizarDoctor(int id,int idUsuario, [FromBody] DoctorDto doctorDTO)
         {
-            var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
+            _context.Database.OpenConnection();
 
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
+
+            var existingDoctor = _context.doctor
+                    .FromSqlInterpolated($"EXEC SP_ObtenerDoctorPorId {id}")
+                    .AsEnumerable()
+                    .SingleOrDefault();
+
+            CargarEspecialidad(existingDoctor);
+            CargarUnidades(existingDoctor);
             if (existingDoctor == null)
             {
                 return NotFound();
             }
-
+            
             existingDoctor.Codigo = doctorDTO.Codigo;
             existingDoctor.NombreD = doctorDTO.NombreD;
             existingDoctor.Apellido1 = doctorDTO.Apellido1;
@@ -161,10 +170,11 @@ namespace ApiGuanaHospi.Controllers
 
             try
             {
-                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.iD_Especialidad}");
+                
+                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id},{existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.iD_Especialidad}");
 
                 _context.SaveChanges();
-
+                _context.Database.CloseConnection();
                 return NoContent();
             }
             catch (Exception ex)

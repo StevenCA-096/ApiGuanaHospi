@@ -30,8 +30,10 @@ namespace DataAccess.Context
         public DbSet<Intervencion> intervencion { get; set; } = default!;
         public DbSet<IntervencionRequest> intervencionRequests { get; set; } = default!;
         public DbSet<TipoIntervencion> tipoIntervencion { get; set; } = default!;   
+        public DbSet<UnidadRequest>unidadRequests { get; set; } = default!; 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UnidadRequest>().HasKey(ur =>ur.ID_Unidad);
             modelBuilder.Entity<EspecialidadRequest>().HasKey(er => er.ID_Especialidad);  
             modelBuilder.Entity<IntervencionRequest>().HasKey(ir => ir.ID_Intervencion);
             //relaciones de Doctor y Unidad

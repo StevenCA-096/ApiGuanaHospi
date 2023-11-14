@@ -14,6 +14,6 @@ namespace DataAccess.DTO
         public string Apellido2 { get; set; }
 
         public int Edad { get; set; }
-        public DateTime Fecha_Ingreso { get; set; }
+        //public DateTime Fecha_Ingreso { get; set; }
     }
 }

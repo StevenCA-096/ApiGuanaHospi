@@ -44,7 +44,7 @@ namespace Services.Repository
                         Subject = new ClaimsIdentity(new Claim[]
                       {
                        new Claim(ClaimTypes.Email, userFound.Correo),
-                       new Claim(ClaimTypes.Role,userFound.rol.Nombre.ToString())
+                       new Claim(ClaimTypes.Role,userFound.rol.NombreR.ToString())
                       }),
                         Expires = DateTime.UtcNow.AddMinutes(10),
                         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)

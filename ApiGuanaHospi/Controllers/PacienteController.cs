@@ -92,12 +92,18 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpPut("{id}")]
-        public IActionResult PutPaciente(int id, [FromBody] PacienteDto pacienteDto)
+        public IActionResult PutPaciente(int id,int idUsuario, [FromBody] PacienteDto pacienteDto)
         {
+            
             try
             {
+                _context.Database.OpenConnection();
+                _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
 
-                var existingPaciente = _context.paciente.FirstOrDefault(d => d.ID_Paciente == id);
+                var existingPaciente = _context.paciente
+                    .FromSqlInterpolated($"EXEC SP_ObtenerPacientePorId {id}")
+                    .AsEnumerable()
+                    .SingleOrDefault();
 
                 if (existingPaciente == null)
                 {
@@ -109,17 +115,19 @@ namespace ApiGuanaHospi.Controllers
                 existingPaciente.Apellido1 = pacienteDto.Apellido1;
                 existingPaciente.Apellido2 = pacienteDto.Apellido2;
                 existingPaciente.Edad = pacienteDto.Edad;
-                
-                
-                var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarPaciente {id}, {existingPaciente.NumSeguro}, {existingPaciente.Nombre}, {existingPaciente.Apellido1}, {existingPaciente.Apellido2}, {existingPaciente.Edad}");
 
+                
+
+                var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarPaciente {id}, {existingPaciente.NumSeguro}, {existingPaciente.Nombre}, {existingPaciente.Apellido1}, {existingPaciente.Apellido2}, {existingPaciente.Edad}");
+                _context.SaveChanges();
+                _context.Database.CloseConnection();
                 return NoContent();
 
             }
             catch (Exception ex)
             {
                 // Manejar el error según tus necesidades
-                return StatusCode(500, "Error al actualizar enfermdad. -> " + ex.Message);
+                return StatusCode(500, "Error al actualizar paciente. -> " + ex.Message);
             }
 
         }
