@@ -19,20 +19,6 @@ namespace ApiGuanaHospi.Controllers
             _context = context;
         }
 
-        //[HttpGet]
-        //public List<Doctor> Get()
-        //{
-        //    var doctores = _context.doctor
-        //colocando la instruccion sql desde la funcion
-        //        .FromSqlRaw("SELECT d.ID_Doctor, d.Codigo, d.NombreD, d.Apellido1, d.Apellido2, d.ID_Especialidad, e.NombreDE as NombreDEspecialidad FROM Doctor d INNER JOIN Especialidad e ON e.ID_Especialidad = d.ID_Especialidad")
-        //        .Include(d => d.especialidad) 
-        //        // evitar la carga en cascada
-        //        //.AsNoTracking()
-        //        .ToList();
-
-        //    return doctores;
-        //}
-
         [HttpGet]
         public IActionResult GetAllDoctor()
         {
@@ -137,7 +123,6 @@ namespace ApiGuanaHospi.Controllers
             }
             catch (Exception ex)
             {
-                // Manejar el error según tus necesidades
                 return StatusCode(500, "Error al crear el doctor. -> " + ex);
             }
         }
@@ -178,12 +163,11 @@ namespace ApiGuanaHospi.Controllers
         {
             _context.Database.OpenConnection();
             _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
-            // Verifica si existe el doctor con el ID proporcionado
+           
             var existingDoctor = GetDoctorById(id);
 
             if (existingDoctor == null)
             {
-                // No encontrado
                 return NotFound();
             }
 
