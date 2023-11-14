@@ -125,7 +125,7 @@ namespace ApiGuanaHospi.Controllers
                     NombreD = doctorDTO.NombreD,
                     Apellido1 = doctorDTO.Apellido1,
                     Apellido2 = doctorDTO.Apellido2,
-                    ID_Especialidad = doctorDTO.ID_Especialidad,
+                    iD_Especialidad= doctorDTO.ID_Especialidad,
                     especialidad = null
                 };
 
@@ -157,11 +157,11 @@ namespace ApiGuanaHospi.Controllers
             existingDoctor.NombreD = doctorDTO.NombreD;
             existingDoctor.Apellido1 = doctorDTO.Apellido1;
             existingDoctor.Apellido2 = doctorDTO.Apellido2;
-            existingDoctor.ID_Especialidad = doctorDTO.ID_Especialidad;
+            existingDoctor.iD_Especialidad = doctorDTO.ID_Especialidad;
 
             try
             {
-                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.ID_Especialidad}");
+                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.iD_Especialidad}");
 
                 _context.SaveChanges();
 

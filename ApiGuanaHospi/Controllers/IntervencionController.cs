@@ -40,7 +40,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPost]
-        public string Post(int idUsuario,IntervencionDTO request) {
+        public string Post(int idUsuario,IntervencionDto request) {
             _context.Database.OpenConnection();
             _context.Database.ExecuteSqlRaw($"exec SP_Contexto ${idUsuario}");
             var resultado = _context.Database.ExecuteSqlInterpolated($"SP_InsertarIntervencion {request.Fecha_Intervencion},{request.prescripcion},{request.Id_TipoIntervencion},{request.Id_Enfermedad},{request.Id_Paciente},{request.Id_Doctor}");
@@ -56,7 +56,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPut]
-        public string Put(int idUsuario,IntervencionDTO request)
+        public string Put(int idUsuario,IntervencionDto request)
         {
             _context.Database.OpenConnection();
             _context.Database.ExecuteSqlRaw($"exec SP_Contexto ${idUsuario}");

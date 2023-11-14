@@ -28,8 +28,8 @@ namespace DataAccess.Context
         public DbSet<Unidad> unidad { get; set; } = default!;
         public DbSet<Paciente> paciente { get; set; } = default!;
         public DbSet<Intervencion> intervencion { get; set; } = default!;
-
-
+        public DbSet<IntervencionRequest> intervencionRequests { get; set; } = default!;
+        public DbSet<TipoIntervencion> tipoIntervencion { get; set; } = default!;   
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EspecialidadRequest>().HasKey(er => er.ID_Especialidad);  
