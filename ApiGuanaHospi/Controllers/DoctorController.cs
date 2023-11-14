@@ -110,14 +110,14 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpPost]
-        public IActionResult CrearDoctor(int id, DoctorDto doctorDTO)
+        public IActionResult CrearDoctor(int idUsuario, DoctorDto doctorDTO)
         {
 
             try
             {
                 _context.Database.OpenConnection();
 
-                _context.Database.ExecuteSqlRaw($"exec SP_Contexto ${id}");
+                _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
                 // objeto Doctor a partir del DTO
                 var doctor = new Doctor
                 {
@@ -174,10 +174,12 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult EliminarDoctor(int id)
+        public IActionResult EliminarDoctor(int id,int idUsuario)
         {
+            _context.Database.OpenConnection();
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             // Verifica si existe el doctor con el ID proporcionado
-            var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
+            var existingDoctor = GetDoctorById(id);
 
             if (existingDoctor == null)
             {
@@ -187,8 +189,9 @@ namespace ApiGuanaHospi.Controllers
 
             try
             {
+                
                 _context.Database.ExecuteSqlInterpolated($"SP_EliminarDoctor {id}");
-
+                _context.Database.CloseConnection();
                 return NoContent();
             }
             catch (Exception ex)

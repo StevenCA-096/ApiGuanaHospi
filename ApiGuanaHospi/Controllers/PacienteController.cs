@@ -60,8 +60,10 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpPost]
-        public IActionResult PostPaciente([FromBody]  PacienteDto pacienteDto)
+        public IActionResult PostPaciente(int idUsuario,[FromBody]  PacienteDto pacienteDto)
         {
+            _context.Database.OpenConnection();
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             try
             {
 
@@ -77,7 +79,7 @@ namespace ApiGuanaHospi.Controllers
                 };
 
                 var result = _context.Database.ExecuteSqlInterpolated($"SP_InsertarPaciente {paciente.NumSeguro}, {paciente.Nombre}, {paciente.Apellido1}, {paciente.Apellido2}, {paciente.Edad}");
-
+                _context.Database.CloseConnection();    
                 return CreatedAtAction(nameof(GetPacienteById), new { id = paciente.ID_Paciente }, paciente);
 
             }
@@ -124,8 +126,10 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpDelete("{id}")]
-        public IActionResult DeletePaciente(int id)
+        public IActionResult DeletePaciente(int id,int idUsuario)
         {
+            _context.Database.OpenConnection();
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             try
             {
 
@@ -137,7 +141,7 @@ namespace ApiGuanaHospi.Controllers
                 }
 
                 _context.Database.ExecuteSqlInterpolated($"SP_EliminarPaciente {id}");
-
+                _context.Database.CloseConnection();
                 return NoContent();
 
             }
