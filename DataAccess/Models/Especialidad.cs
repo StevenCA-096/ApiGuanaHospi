@@ -12,7 +12,7 @@ namespace DataAccess.Models
     {
 
         public int ID_Especialidad { get; set; }
-        public string NombreE { get; set; }
+        public string Nombre { get; set; }
 
         [JsonIgnore]
         public List<Doctor>? doctores { get; set; }

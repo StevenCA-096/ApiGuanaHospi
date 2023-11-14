@@ -15,9 +15,10 @@ namespace DataAccess.Models
         public string NombreD { get; set; }
         public string Apellido1 { get; set; }
         public string Apellido2 { get; set; }
-        public int ID_Especialidad { get; set; }
+        public int iD_Especialidad { get; set; }
 
         public Especialidad especialidad { get; set; }
         public List<Unidad> unidad { get; set; }
+        public List<Intervencion>? intervenciones { get; set; }
     }
 }

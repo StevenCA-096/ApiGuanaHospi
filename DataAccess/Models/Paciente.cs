@@ -14,9 +14,7 @@ namespace DataAccess.Models
         public string Nombre { get; set; }
         public string Apellido1 { get; set; }
         public string Apellido2 { get; set; }
-
-        public int Edad { get; set; }
-        public DateTime Fecha_Ingreso { get; set; }
-
+        public int Edad{ get; set; }
+        public List<Intervencion>? intervenciones { get; set; }
     }
 }

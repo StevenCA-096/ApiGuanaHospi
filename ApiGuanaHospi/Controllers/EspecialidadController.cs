@@ -1,6 +1,7 @@
 ﻿using DataAccess.Context;
 using DataAccess.DTO;
 using DataAccess.Models;
+using DataAccess.RequestObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,9 +21,9 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpGet]
-        public List<Especialidad> GetAllEspecialidad()
+        public List<EspecialidadRequest> GetAllEspecialidad()
         {
-            var especialidades = _context.especialidad
+            var especialidades = _context.especialidadRequest
                 // Llamando al sp de la db usando FromSqlInterpolated
                 .FromSqlInterpolated($"EXEC SP_ObtenerEspecialidades")
                 .ToList();
@@ -33,7 +34,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpGet("{id}")]
         public IActionResult GetEspecialidadById(int id)
         {
-            var especialidad = _context.especialidad
+            var especialidad = _context.especialidadRequest
             .FromSqlInterpolated($"EXEC SP_ObtenerEspecialidadPorId {id}")
             .AsEnumerable()
             .SingleOrDefault();
@@ -51,11 +52,11 @@ namespace ApiGuanaHospi.Controllers
         {
             var especialidad = new Especialidad
             {
-                NombreE = especialidadDto.NombreE,
+                Nombre = especialidadDto.NombreE,
 
             };
 
-            _context.Database.ExecuteSqlInterpolated($"SP_InsertarEspecialidad {especialidad.NombreE}");
+            _context.Database.ExecuteSqlInterpolated($"SP_InsertarEspecialidad {especialidad.Nombre}");
 
             return Ok("Especialidad creada exitosamente");
         }
@@ -70,9 +71,9 @@ namespace ApiGuanaHospi.Controllers
                 return NotFound();
             }
 
-            existingEspecialidad.NombreE = especialidadDto.NombreE;
+            existingEspecialidad.Nombre = especialidadDto.NombreE;
 
-            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarEspecialidad {id}, {existingEspecialidad.NombreE}");
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarEspecialidad {id}, {existingEspecialidad.Nombre}");
 
             _context.SaveChanges();
 

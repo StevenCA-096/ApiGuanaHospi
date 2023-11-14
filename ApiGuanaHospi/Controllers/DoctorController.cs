@@ -24,7 +24,7 @@ namespace ApiGuanaHospi.Controllers
         //{
         //    var doctores = _context.doctor
         //colocando la instruccion sql desde la funcion
-        //        .FromSqlRaw("SELECT d.ID_Doctor, d.Codigo, d.NombreD, d.Apellido1, d.Apellido2, d.ID_Especialidad, e.NombreE as NombreEspecialidad FROM Doctor d INNER JOIN Especialidad e ON e.ID_Especialidad = d.ID_Especialidad")
+        //        .FromSqlRaw("SELECT d.ID_Doctor, d.Codigo, d.NombreD, d.Apellido1, d.Apellido2, d.ID_Especialidad, e.NombreDE as NombreDEspecialidad FROM Doctor d INNER JOIN Especialidad e ON e.ID_Especialidad = d.ID_Especialidad")
         //        .Include(d => d.especialidad) 
         //        // evitar la carga en cascada
         //        //.AsNoTracking()
@@ -125,11 +125,11 @@ namespace ApiGuanaHospi.Controllers
                     NombreD = doctorDTO.NombreD,
                     Apellido1 = doctorDTO.Apellido1,
                     Apellido2 = doctorDTO.Apellido2,
-                    ID_Especialidad = doctorDTO.ID_Especialidad,
+                    iD_Especialidad= doctorDTO.ID_Especialidad,
                     especialidad = null
                 };
 
-                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
+                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.iD_Especialidad}");
 
                 _context.Database.CloseConnection();
                 return CreatedAtAction(nameof(GetDoctorById), new { id = doctor.ID_Doctor }, doctor);
@@ -157,11 +157,11 @@ namespace ApiGuanaHospi.Controllers
             existingDoctor.NombreD = doctorDTO.NombreD;
             existingDoctor.Apellido1 = doctorDTO.Apellido1;
             existingDoctor.Apellido2 = doctorDTO.Apellido2;
-            existingDoctor.ID_Especialidad = doctorDTO.ID_Especialidad;
+            existingDoctor.iD_Especialidad = doctorDTO.ID_Especialidad;
 
             try
             {
-                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.ID_Especialidad}");
+                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.iD_Especialidad}");
 
                 _context.SaveChanges();
 

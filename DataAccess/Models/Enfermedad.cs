@@ -13,5 +13,6 @@ namespace DataAccess.Models
         public string Nombre { get; set; }
         [JsonIgnore]
         public List<Enfermedad_Sintoma>? enfermedad_Sintoma { get; set; }
+        public List<Intervencion>? intervenciones { get; set; }
     }
 }

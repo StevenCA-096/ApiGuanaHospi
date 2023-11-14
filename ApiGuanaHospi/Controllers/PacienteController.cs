@@ -72,11 +72,11 @@ namespace ApiGuanaHospi.Controllers
                     Apellido1 = pacienteDto.Apellido1,
                     Apellido2 = pacienteDto.Apellido2,
                     Edad = pacienteDto.Edad,
-                    Fecha_Ingreso = pacienteDto.Fecha_Ingreso
+                    
 
                 };
 
-                var result = _context.Database.ExecuteSqlInterpolated($"SP_InsertarPaciente {paciente.NumSeguro}, {paciente.Nombre}, {paciente.Apellido1}, {paciente.Apellido2}, {paciente.Edad}, {paciente.Fecha_Ingreso}");
+                var result = _context.Database.ExecuteSqlInterpolated($"SP_InsertarPaciente {paciente.NumSeguro}, {paciente.Nombre}, {paciente.Apellido1}, {paciente.Apellido2}, {paciente.Edad}");
 
                 return CreatedAtAction(nameof(GetPacienteById), new { id = paciente.ID_Paciente }, paciente);
 
@@ -107,9 +107,9 @@ namespace ApiGuanaHospi.Controllers
                 existingPaciente.Apellido1 = pacienteDto.Apellido1;
                 existingPaciente.Apellido2 = pacienteDto.Apellido2;
                 existingPaciente.Edad = pacienteDto.Edad;
-                existingPaciente.Fecha_Ingreso = pacienteDto.Fecha_Ingreso;
                 
-                var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarPaciente {id}, {existingPaciente.NumSeguro}, {existingPaciente.Nombre}, {existingPaciente.Apellido1}, {existingPaciente.Apellido2}, {existingPaciente.Edad}, {existingPaciente.Fecha_Ingreso}");
+                
+                var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarPaciente {id}, {existingPaciente.NumSeguro}, {existingPaciente.Nombre}, {existingPaciente.Apellido1}, {existingPaciente.Apellido2}, {existingPaciente.Edad}");
 
                 return NoContent();
 

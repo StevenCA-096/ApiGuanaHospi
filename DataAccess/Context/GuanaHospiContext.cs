@@ -1,4 +1,5 @@
 ﻿using DataAccess.Models;
+using DataAccess.RequestObjects;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace DataAccess.Context
             //this.ChangeTracker.LazyLoadingEnabled = false;
         }
         public DbSet<Especialidad> especialidad { get; set; } = default!;
+        public DbSet<EspecialidadRequest> especialidadRequest { get; set; } = default!; 
         public DbSet<Sintoma> sintoma { get; set; } = default!;
         public DbSet<Doctor> doctor { get; set; } = default!;
         public DbSet<Enfermedad_Sintoma> enfermedad_Sintoma { get; set; } = default!;
@@ -26,10 +28,12 @@ namespace DataAccess.Context
         public DbSet<Unidad> unidad { get; set; } = default!;
         public DbSet<Paciente> paciente { get; set; } = default!;
         public DbSet<Intervencion> intervencion { get; set; } = default!;
-
-
+        public DbSet<IntervencionRequest> intervencionRequests { get; set; } = default!;
+        public DbSet<TipoIntervencion> tipoIntervencion { get; set; } = default!;   
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<EspecialidadRequest>().HasKey(er => er.ID_Especialidad);  
+            modelBuilder.Entity<IntervencionRequest>().HasKey(ir => ir.ID_Intervencion);
             //relaciones de Doctor y Unidad
             modelBuilder.Entity<Unidad>().HasKey(u => u.ID_Unidad);
             modelBuilder.Entity<Doctor>().HasMany(d => d.unidad).WithOne(u=>u.Doctor);
@@ -38,7 +42,7 @@ namespace DataAccess.Context
             modelBuilder.Entity<Doctor>()
                 .HasOne(d => d.especialidad)
                 .WithMany(e => e.doctores)
-                .HasForeignKey(d => d.ID_Especialidad);
+                .HasForeignKey(d => d.iD_Especialidad);
 
             //indicar por aca la fk de doctor en unidad o por el modelo (cualquiera de las 2 funciona)
             modelBuilder.Entity<Unidad>()
@@ -73,6 +77,25 @@ namespace DataAccess.Context
             modelBuilder.Entity<Enfermedad>().HasKey(e => e.Id_Enfermedad);
 
             modelBuilder.Entity<Enfermedad_Sintoma>().HasKey(es => es.Id_Enfermedad);
+            //Definiendo PK
+            modelBuilder.Entity<Paciente>().HasKey(p => p.ID_Paciente);
+            modelBuilder.Entity<TipoIntervencion>().HasKey(ti => ti.iD_TipoIntervencion);
+
+
+            //Relaciones de intervencion y configurando su PK
+            modelBuilder.Entity<Intervencion>().HasKey(i => i.ID_Intervencion);
+
+            modelBuilder.Entity<Intervencion>().HasOne(i => i.tipoIntervencion).WithMany(ti => ti.intervenciones);
+            modelBuilder.Entity<TipoIntervencion>().HasMany(ti => ti.intervenciones).WithOne(i => i.tipoIntervencion);
+
+            modelBuilder.Entity<Intervencion>().HasOne(i => i.paciente).WithMany(p => p.intervenciones);
+            modelBuilder.Entity<Paciente>().HasMany(p => p.intervenciones).WithOne(i => i.paciente);
+
+            modelBuilder.Entity<Intervencion>().HasOne(i => i.enfermedad).WithMany(e => e.intervenciones);
+            modelBuilder.Entity<Enfermedad>().HasMany(e => e.intervenciones).WithOne(i => i.enfermedad);
+
+            modelBuilder.Entity<Intervencion>().HasOne(i => i.doctor).WithMany(d => d.intervenciones);
+            modelBuilder.Entity<Doctor>().HasMany(d => d.intervenciones).WithOne(i => i.doctor);
         }
 
 

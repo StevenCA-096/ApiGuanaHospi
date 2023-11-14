@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.DTO
+namespace DataAccess.RequestObjects
 {
-    public class IntervencionDto
+    public class IntervencionRequest
     {
         public int ID_Intervencion { get; set; }
         public DateTime Fecha_Intervencion { get; set; }
         public string prescripcion { get; set; }
-        //Relaciones
-        public int Id_TipoIntervencion { get; set; }
-        public int Id_Enfermedad { get; set; }
-        public int Id_Paciente { get; set; }
-        public int Id_Doctor { get; set; }
+        public string NombreTi { get; set; }
+        public string NombreE { get; set; }
+        public string NombreP { get; set; }
+        public string NombreD { get; set; }
+
     }
 }
