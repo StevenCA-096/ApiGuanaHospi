@@ -42,7 +42,7 @@ namespace ApiGuanaHospi.Controllers
         [HttpPost]
         public string Post(int idUsuario,IntervencionDto request) {
             _context.Database.OpenConnection();
-            _context.Database.ExecuteSqlRaw($"exec SP_Contexto ${idUsuario}");
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             var resultado = _context.Database.ExecuteSqlInterpolated($"SP_InsertarIntervencion {request.Fecha_Intervencion},{request.prescripcion},{request.Id_TipoIntervencion},{request.Id_Enfermedad},{request.Id_Paciente},{request.Id_Doctor}");
             _context.Database.CloseConnection();
             if (resultado == 1)
@@ -59,7 +59,7 @@ namespace ApiGuanaHospi.Controllers
         public string Put(int idUsuario,IntervencionDto request)
         {
             _context.Database.OpenConnection();
-            _context.Database.ExecuteSqlRaw($"exec SP_Contexto ${idUsuario}");
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             var resultado = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarIntervencion {request.ID_Intervencion},{request.Fecha_Intervencion},{request.prescripcion},{request.Id_TipoIntervencion},{request.Id_Enfermedad},{request.Id_Paciente},{request.Id_Doctor}");
             _context.Database.CloseConnection();
             if (resultado == 1)
@@ -74,13 +74,13 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpDelete]
-        public string Delete(int idUsuario,int idIntervencion) {
+        public string Delete(int id,int idUsuario) {
             _context.Database.OpenConnection();
-            _context.Database.ExecuteSqlRaw($"exec SP_Contexto ${idUsuario}");
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
 
-            var resultado = _context.Database.ExecuteSqlInterpolated($"SP_EliminaIntervencion {idIntervencion}");
+            var resultado = _context.Database.ExecuteSqlInterpolated($"SP_EliminaIntervencion {id}");
             _context.Database.CloseConnection();
-            if (resultado == 1)
+            if (resultado >= 1)
             {
                 return "Eliminado";
             }

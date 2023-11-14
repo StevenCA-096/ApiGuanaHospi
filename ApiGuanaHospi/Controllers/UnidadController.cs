@@ -1,6 +1,7 @@
 ﻿using DataAccess.Context;
 using DataAccess.DTO;
 using DataAccess.Models;
+using DataAccess.RequestObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,14 +27,14 @@ namespace ApiGuanaHospi.Controllers
         //}
 
         [HttpGet]
-        public List<Unidad> GetAllUnidades()
+        public List<UnidadRequest> GetAllUnidades()
         {
-            var unidades = _context.unidad.FromSqlInterpolated($"SP_ObtenerUnidad").ToList();
+            var unidades = _context.unidadRequests.FromSqlInterpolated($"SP_ObtenerUnidad").ToList();
 
             foreach (var unidad in unidades)
             {
                 _context.Entry(unidad)
-                    .Reference(u => u.Doctor)
+                    .Reference(u => u.doctor)
                     .Load();
 
             }
