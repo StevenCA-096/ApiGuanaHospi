@@ -50,10 +50,10 @@ namespace ApiGuanaHospi.Controllers
 
             var rol = new Rol
             {
-                NombreR = rolDTO.NombreR
+                Nombre = rolDTO.NombreR
             };
 
-            _context.Database.ExecuteSqlInterpolated($"SP_InsertarRol {rol.NombreR}");
+            _context.Database.ExecuteSqlInterpolated($"SP_InsertarRol {rol.Nombre}");
 
             return Ok("Rol creado exitosamente");
         }
@@ -68,9 +68,9 @@ namespace ApiGuanaHospi.Controllers
                 return NotFound();
             }
 
-            existingRol.NombreR = RolDTO.NombreR;
+            existingRol.Nombre = RolDTO.NombreR;
 
-            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarRol {id}, {existingRol.NombreR}");
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarRol {id}, {existingRol.Nombre}");
 
             _context.SaveChanges();
 

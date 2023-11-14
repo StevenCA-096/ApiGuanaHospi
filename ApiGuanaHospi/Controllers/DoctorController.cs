@@ -34,12 +34,26 @@ namespace ApiGuanaHospi.Controllers
         //}
 
         [HttpGet]
-        public List<Doctor> GetAllDoctor()
+        public IActionResult GetAllDoctor()
         {
-            var doctores = _context.doctor
-                .FromSqlInterpolated($"EXEC SP_ObtenerDoctores")
-                .ToList();
+            try
+            {
+                var doctores = _context.doctor
+                    .FromSqlInterpolated($"EXEC SP_ObtenerDoctores")
+                    .ToList();
 
+                CargarRelaciones(doctores);
+
+                return Ok(doctores);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error interno. -> " + ex);
+            }
+        }
+
+        private void CargarRelaciones(List<Doctor> doctores)
+        {
             foreach (var doctor in doctores)
             {
                 _context.Entry(doctor)
@@ -50,103 +64,139 @@ namespace ApiGuanaHospi.Controllers
                     .Collection(d => d.unidad)
                     .Load();
             }
-
-            return doctores;
         }
+
 
         [HttpGet("{id}")]
         public IActionResult GetDoctorById(int id)
         {
-            var doctor = _context.doctor
-            .FromSqlInterpolated($"EXEC SP_ObtenerDoctorPorId {id}")
-            .AsEnumerable()
-            .SingleOrDefault();
-
-            if (doctor == null)
+            try
             {
-                return NotFound();
-            }
-             
+                var doctor = _context.doctor
+                    .FromSqlInterpolated($"EXEC SP_ObtenerDoctorPorId {id}")
+                    .AsEnumerable()
+                    .SingleOrDefault();
 
-            if (doctor != null)
-            {
-                _context.Entry(doctor)
-                    .Reference(d => d.especialidad)
-                    .Load();
-
-                _context.Entry(doctor)
-                    .Collection(d => d.unidad)
-                    .Load();
-            }
-
-            return Ok(doctor);
-        }
-
-        [HttpPost]
-        public IActionResult CrearDoctor(int id,DoctorDto doctorDTO)
-        {
-            _context.Database.OpenConnection();
-
-            _context.Database.ExecuteSqlRaw($"exec SP_Contexto ${id}");
-    // objeto Doctor a partir del DTO
-            var doctor = new Doctor
-            {
-                //ID_Doctor = doctorDTO.ID_Doctor,
-                Codigo = doctorDTO.Codigo,
-                NombreD = doctorDTO.NombreD,
-                Apellido1 = doctorDTO.Apellido1,
-                Apellido2 = doctorDTO.Apellido2,
-                iD_Especialidad = doctorDTO.ID_Especialidad,
-                //null para no pasar nada al objeto de la relacion 
-                especialidad = null 
-            };
-
-                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.iD_Especialidad}");
-
-            _context.Database.CloseConnection();
-            return Ok("Doctor creado exitosamente");
-        }
-
-        [HttpPut("{id}")]
-            public IActionResult ActualizarDoctor(int id, [FromBody] DoctorDto doctorDTO)
-            {
-                var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
-
-                if (existingDoctor == null)
+                if (doctor == null)
                 {
                     return NotFound();
                 }
 
-                existingDoctor.Codigo = doctorDTO.Codigo;
-                existingDoctor.NombreD = doctorDTO.NombreD;
-                existingDoctor.Apellido1 = doctorDTO.Apellido1;
-                existingDoctor.Apellido2 = doctorDTO.Apellido2;
-                existingDoctor.iD_Especialidad = doctorDTO.ID_Especialidad;
+                // Cargar especialidad y unidades
+                CargarEspecialidad(doctor);
+                CargarUnidades(doctor);
 
-                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.iD_Especialidad}");
+                return Ok(doctor);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error interno. -> " + ex);
+            }
+        }
+
+        private void CargarEspecialidad(Doctor doctor)
+        {
+            _context.Entry(doctor)
+                .Reference(d => d.especialidad)
+                .Load();
+        }
+
+        private void CargarUnidades(Doctor doctor)
+        {
+            _context.Entry(doctor)
+                .Collection(d => d.unidad)
+                .Load();
+        }
+
+
+        [HttpPost]
+        public IActionResult CrearDoctor(int id, DoctorDto doctorDTO)
+        {
+
+            try
+            {
+                _context.Database.OpenConnection();
+
+                _context.Database.ExecuteSqlRaw($"exec SP_Contexto ${id}");
+                // objeto Doctor a partir del DTO
+                var doctor = new Doctor
+                {
+                    Codigo = doctorDTO.Codigo,
+                    NombreD = doctorDTO.NombreD,
+                    Apellido1 = doctorDTO.Apellido1,
+                    Apellido2 = doctorDTO.Apellido2,
+                    ID_Especialidad = doctorDTO.ID_Especialidad,
+                    especialidad = null
+                };
+
+                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.iD_Especialidad}");
+
+                _context.Database.CloseConnection();
+                return CreatedAtAction(nameof(GetDoctorById), new { id = doctor.ID_Doctor }, doctor);
+
+            }
+            catch (Exception ex)
+            {
+                // Manejar el error según tus necesidades
+                return StatusCode(500, "Error al crear el doctor. -> " + ex);
+            }
+        }
+
+
+        [HttpPut("{id}")]
+        public IActionResult ActualizarDoctor(int id, [FromBody] DoctorDto doctorDTO)
+        {
+            var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
+
+            if (existingDoctor == null)
+            {
+                return NotFound();
+            }
+
+            existingDoctor.Codigo = doctorDTO.Codigo;
+            existingDoctor.NombreD = doctorDTO.NombreD;
+            existingDoctor.Apellido1 = doctorDTO.Apellido1;
+            existingDoctor.Apellido2 = doctorDTO.Apellido2;
+            existingDoctor.ID_Especialidad = doctorDTO.ID_Especialidad;
+
+            try
+            {
+                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.ID_Especialidad}");
 
                 _context.SaveChanges();
 
                 return NoContent();
             }
-
-            [HttpDelete("{id}")]
-            public IActionResult EliminarDoctor(int id)
+            catch (Exception ex)
             {
-                // Verifica si existe el doctor con el ID proporcionado
-                var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
+                return StatusCode(500, "Error al actualizar el doctor. -> " + ex);
+            }
+        }
 
-                if (existingDoctor == null)
-                {
-                    // No encontrado
-                    return NotFound();
-                }
+        [HttpDelete("{id}")]
+        public IActionResult EliminarDoctor(int id)
+        {
+            // Verifica si existe el doctor con el ID proporcionado
+            var existingDoctor = _context.doctor.FirstOrDefault(d => d.ID_Doctor == id);
 
-                // Ejecuta el Stored Procedure para eliminar el doctor
+            if (existingDoctor == null)
+            {
+                // No encontrado
+                return NotFound();
+            }
+
+            try
+            {
                 _context.Database.ExecuteSqlInterpolated($"SP_EliminarDoctor {id}");
 
                 return NoContent();
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al eliminar el doctor. -> " + ex);
+            }
+        }
+
 
     }
 }
