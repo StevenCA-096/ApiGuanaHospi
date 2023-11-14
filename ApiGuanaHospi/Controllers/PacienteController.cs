@@ -34,7 +34,7 @@ namespace ApiGuanaHospi.Controllers
             }
         }
 
-
+            
         [HttpGet("{id}")]
         public IActionResult GetPacienteById(int id)
         {
