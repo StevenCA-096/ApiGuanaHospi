@@ -63,10 +63,11 @@ namespace ApiGuanaHospi.Controllers
                     .AsEnumerable()
                     .SingleOrDefault();
 
-                if (doctor == null)
-                {
+                    if (doctor == null)
+                    {
+                    Console.WriteLine(doctor);
                     return NotFound();
-                }
+                    }
 
                 // Cargar especialidad y unidades
                 CargarEspecialidad(doctor);
@@ -76,7 +77,7 @@ namespace ApiGuanaHospi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Error interno. -> " + ex);
+                return StatusCode(500, "Error interno. -> " + ex.Message);
             }
         }
 
@@ -142,6 +143,7 @@ namespace ApiGuanaHospi.Controllers
 
             CargarEspecialidad(existingDoctor);
             CargarUnidades(existingDoctor);
+
             if (existingDoctor == null)
             {
                 return NotFound();

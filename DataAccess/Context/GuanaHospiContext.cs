@@ -18,7 +18,7 @@ namespace DataAccess.Context
             //this.ChangeTracker.LazyLoadingEnabled = false;
         }
         public DbSet<Especialidad> especialidad { get; set; } = default!;
-        public DbSet<EspecialidadRequest> especialidadRequest { get; set; } = default!; 
+        public DbSet<EspecialidadRequest> especialidadRequest { get; set; } = default!;
         public DbSet<Sintoma> sintoma { get; set; } = default!;
         public DbSet<Doctor> doctor { get; set; } = default!;
         public DbSet<Enfermedad_Sintoma> enfermedad_Sintoma { get; set; } = default!;
@@ -29,16 +29,24 @@ namespace DataAccess.Context
         public DbSet<Paciente> paciente { get; set; } = default!;
         public DbSet<Intervencion> intervencion { get; set; } = default!;
         public DbSet<IntervencionRequest> intervencionRequests { get; set; } = default!;
-        public DbSet<TipoIntervencion> tipoIntervencion { get; set; } = default!;   
-        public DbSet<UnidadRequest>unidadRequests { get; set; } = default!; 
+        public DbSet<TipoIntervencion> tipoIntervencion { get; set; } = default!;
+        public DbSet<UnidadRequest> unidadRequests { get; set; } = default!;
+        public DbSet<Paciente_Unidad> paciente_unidad { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UnidadRequest>().HasKey(ur =>ur.ID_Unidad);
-            modelBuilder.Entity<EspecialidadRequest>().HasKey(er => er.ID_Especialidad);  
+            modelBuilder.Entity<UnidadRequest>().HasKey(ur => ur.ID_Unidad);
+            modelBuilder.Entity<EspecialidadRequest>().HasKey(er => er.ID_Especialidad);
             modelBuilder.Entity<IntervencionRequest>().HasKey(ir => ir.ID_Intervencion);
-            //relaciones de Doctor y Unidad
+
+            //pk doctor
+            modelBuilder.Entity<Doctor>()
+                .HasKey(d => d.ID_Doctor);
+
+            //pk unidad
             modelBuilder.Entity<Unidad>().HasKey(u => u.ID_Unidad);
-            modelBuilder.Entity<Doctor>().HasMany(d => d.unidad).WithOne(u=>u.Doctor);
+
+            //relacion unidad - doctor
+            modelBuilder.Entity<Doctor>().HasMany(d => d.unidad).WithOne(u => u.Doctor);
 
             //indicamos que la tabla doctor tiene una fk de la tabla especialidad que es su pk en dicha tabla
             modelBuilder.Entity<Doctor>()
@@ -52,37 +60,54 @@ namespace DataAccess.Context
                 .WithMany(e => e.unidad)
                 .HasForeignKey(d => d.Id_Doctor);
 
-            //
+            //pk paciente
             modelBuilder.Entity<Paciente>().HasKey(p => p.ID_Paciente);
 
-            //
+            //pk intervencion
             modelBuilder.Entity<Intervencion>().HasKey(p => p.ID_Intervencion);
 
-            //
-
+            //pk especialidad
             modelBuilder.Entity<Especialidad>().HasKey(e => e.ID_Especialidad);
 
+            //pk sintoma
             modelBuilder.Entity<Sintoma>().HasKey(s => s.ID_Sintoma);
 
-            modelBuilder.Entity<Doctor>()
-                .HasKey(d => d.ID_Doctor);
-
+            //pk usuario
             modelBuilder.Entity<Usuario>().HasKey(u => u.Id_Usuario);
 
+            //pk rol
             modelBuilder.Entity<Rol>().HasKey(r => r.Id_Rol);
 
+            //relacion usuario - rol
             modelBuilder.Entity<Usuario>()
                 .HasOne(f => f.rol)
                 .WithMany(e => e.usuarios)
                 .HasForeignKey(f => f.ID_Rol);
 
+            //pk enfermedad
             modelBuilder.Entity<Enfermedad>().HasKey(e => e.Id_Enfermedad);
 
-            modelBuilder.Entity<Enfermedad_Sintoma>().HasKey(es => es.Id_Enfermedad);
-            //Definiendo PK
+            //pk enfermedad_sintoma
+            modelBuilder.Entity<Enfermedad_Sintoma>().HasKey(es => es.Id_Enfermedad_Sintoma);
+
+            //fk
+            // modelBuilder.Entity<Enfermedad_Sintoma>()
+            // .HasOne(f => f.enfermedad)
+            // .WithMany(e => e.enfermedad_Sintoma)
+            // .HasForeignKey(f => f.Id_Enfermedad);
+
+            // modelBuilder.Entity<Enfermedad_Sintoma>()
+            //.HasOne(f => f.sintoma)
+            //.WithMany(e => e.enfermedad_Sintoma)
+            //.HasForeignKey(f => f.Id_Sintoma);
+
+            //
+            modelBuilder.Entity<Paciente_Unidad>().HasKey(pa => pa.ID_Paciente_Unidad);
+
+
+            //Definiendo PK paciente e intervencion
             modelBuilder.Entity<Paciente>().HasKey(p => p.ID_Paciente);
             modelBuilder.Entity<TipoIntervencion>().HasKey(ti => ti.iD_TipoIntervencion);
-
 
             //Relaciones de intervencion y configurando su PK
             modelBuilder.Entity<Intervencion>().HasKey(i => i.ID_Intervencion);

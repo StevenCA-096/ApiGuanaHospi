@@ -48,8 +48,10 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostEnfermedad([FromBody] EspecialidadDto especialidadDto)
+        public IActionResult PostEnfermedad(int idUsuario, [FromBody] EspecialidadDto especialidadDto)
         {
+            _context.Database.OpenConnection();
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             var especialidad = new Especialidad
             {
                 Nombre = especialidadDto.NombreE,
@@ -57,7 +59,7 @@ namespace ApiGuanaHospi.Controllers
             };
 
             _context.Database.ExecuteSqlInterpolated($"SP_InsertarEspecialidad {especialidad.Nombre}");
-
+            _context.Database.CloseConnection();
             return Ok("Especialidad creada exitosamente");
         }
 

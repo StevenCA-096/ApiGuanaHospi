@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DataAccess.Context;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiGuanaHospi.Controllers
 {
@@ -6,36 +8,30 @@ namespace ApiGuanaHospi.Controllers
     [ApiController]
     public class EnfermedadSintomaController : ControllerBase
     {
-        // GET: api/<EnfermedadSintomaController>
+        private readonly GuanaHospiContext _context;
+        public EnfermedadSintomaController(GuanaHospiContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult GetAllEnfermedadSintoma()
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                var sintomaEnfermedad = _context.enfermedad_Sintoma
+                    .FromSqlInterpolated($"EXEC SP_ObtenerEnfermedadSintoma")
+                    .ToList();
+
+                return Ok(sintomaEnfermedad);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error interno. -> " + ex.Message);
+            }
         }
 
-        // GET api/<EnfermedadSintomaController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
-        // POST api/<EnfermedadSintomaController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
 
-        // PUT api/<EnfermedadSintomaController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<EnfermedadSintomaController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

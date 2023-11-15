@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DataAccess.Context;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +10,27 @@ namespace ApiGuanaHospi.Controllers
     [ApiController]
     public class PacienteUnidadController : ControllerBase
     {
-        // GET: api/<PacienteUnidadController>
+        private readonly GuanaHospiContext _context;
+        public PacienteUnidadController(GuanaHospiContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult GetAllPacienteUnidad()
         {
-            return new string[] { "value1", "value2" };
-        }
+            try
+            {
+                var sintomaEnfermedad = _context.paciente_unidad
+                    .FromSqlInterpolated($"EXEC SP_ObtenerPacienteUnidad")
+                    .ToList();
 
-        // GET api/<PacienteUnidadController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<PacienteUnidadController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<PacienteUnidadController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<PacienteUnidadController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+                return Ok(sintomaEnfermedad);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error interno. -> " + ex.Message);
+            }
         }
     }
 }
