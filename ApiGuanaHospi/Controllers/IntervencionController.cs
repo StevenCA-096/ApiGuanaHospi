@@ -56,21 +56,22 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPut]
-        public string Put(int idUsuario,IntervencionDto request)
+        public IActionResult Put(int idUsuario,IntervencionDto request)
         {
             _context.Database.OpenConnection();
             _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
-            var resultado = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarIntervencion {request.ID_Intervencion},{request.Fecha_Intervencion},{request.prescripcion},{request.Id_TipoIntervencion},{request.Id_Enfermedad},{request.Id_Paciente},{request.Id_Doctor}");
+            try { 
+            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarIntervencion {request.ID_Intervencion},{request.Fecha_Intervencion},{request.prescripcion},{request.Id_TipoIntervencion},{request.Id_Enfermedad},{request.Id_Paciente},{request.Id_Doctor}");
             _context.Database.CloseConnection();
-            if (resultado == 1)
+                return Ok("Actualizado");
+            }catch (Exception ex)
             {
-                return "Modificado";
-            }
-            else {
-                return "Error";
+                
+                return NotFound(ex);
             }
 
-            
+
+
         }
 
         [HttpDelete]

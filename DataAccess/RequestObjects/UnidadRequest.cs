@@ -1,6 +1,7 @@
 ﻿using DataAccess.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace DataAccess.RequestObjects
         public int CodigoU { get; set; }
         public string NombreU { get; set; }
         public int Planta { get; set; }
-        public int Id_Doctor { get; set; }
-        public Doctor doctor { get; set; }
+        public int doctor_id{ get; set; }
+        public Doctor? doctor { get; set; }
     }
 }
