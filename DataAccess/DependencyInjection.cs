@@ -20,6 +20,11 @@ namespace DataAccess
 
             services.AddScoped<GuanaHospiContext>();
 
+            services.AddDbContext<DataWarehouseContext>(DWoptions =>
+            DWoptions.UseSqlServer(configuration.GetConnectionString("DataWarehouse") ?? throw new InvalidOperationException("Connection string 'DataWarehouse' not found.")));
+
+            services.AddScoped<DataWarehouseContext>();
+
             return services;
         }
     }

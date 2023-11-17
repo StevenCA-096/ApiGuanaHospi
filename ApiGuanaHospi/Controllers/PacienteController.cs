@@ -1,6 +1,7 @@
 ﻿using DataAccess.Context;
 using DataAccess.DTO;
 using DataAccess.Models;
+using DataAccess.UodateObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -91,37 +92,17 @@ namespace ApiGuanaHospi.Controllers
         }
 
 
-        [HttpPut("{id}")]
-        public IActionResult PutPaciente(int id,int idUsuario, [FromBody] PacienteDto pacienteDto)
+        [HttpPut]
+        public IActionResult PutPaciente(int idUsuario, [FromBody] PacienteActualizar paciente)
         {
-            
+            _context.Database.OpenConnection();
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             try
-            {
-                _context.Database.OpenConnection();
-                _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
-
-                var existingPaciente = _context.paciente
-                    .FromSqlInterpolated($"EXEC SP_ObtenerPacientePorId {id}")
-                    .AsEnumerable()
-                    .SingleOrDefault();
-
-                if (existingPaciente == null)
-                {
-                    return NotFound();
-                }
-
-                existingPaciente.NumSeguro = pacienteDto.NumSeguro;
-                existingPaciente.Nombre = pacienteDto.Nombre;
-                existingPaciente.Apellido1 = pacienteDto.Apellido1;
-                existingPaciente.Apellido2 = pacienteDto.Apellido2;
-                existingPaciente.Edad = pacienteDto.Edad;
-
-                
-
-                var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarPaciente {id}, {existingPaciente.NumSeguro}, {existingPaciente.Nombre}, {existingPaciente.Apellido1}, {existingPaciente.Apellido2}, {existingPaciente.Edad}");
+            {       
+                var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarPaciente {paciente.IdPaciente}, {paciente.NumSeguro}, {paciente.Nombre}, {paciente.Apellido1}, {paciente.Apellido2}, {paciente.Edad}");
                 _context.SaveChanges();
                 _context.Database.CloseConnection();
-                return NoContent();
+                return Ok(paciente);
 
             }
             catch (Exception ex)

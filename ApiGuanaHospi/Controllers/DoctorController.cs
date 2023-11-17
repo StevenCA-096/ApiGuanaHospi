@@ -1,6 +1,8 @@
 ﻿using DataAccess.Context;
 using DataAccess.DTO;
 using DataAccess.Models;
+using DataAccess.UodateObjects;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -109,14 +111,14 @@ namespace ApiGuanaHospi.Controllers
                 var doctor = new Doctor
                 {
                     Codigo = doctorDTO.Codigo,
-                    NombreD = doctorDTO.NombreD,
+                    NombreD = doctorDTO.Nombre,
                     Apellido1 = doctorDTO.Apellido1,
                     Apellido2 = doctorDTO.Apellido2,
                     ID_Especialidad= doctorDTO.ID_Especialidad,
                     especialidad = null
                 };
 
-                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctor.NombreD},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
+                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctorDTO.Nombre},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
 
                 _context.Database.CloseConnection();
                 return CreatedAtAction(nameof(GetDoctorById), new { id = doctor.ID_Doctor }, doctor);
@@ -129,39 +131,19 @@ namespace ApiGuanaHospi.Controllers
         }
 
 
-        [HttpPut("{id}")]
-        public IActionResult ActualizarDoctor(int id,int idUsuario, [FromBody] DoctorDto doctorDTO)
+        [HttpPut]
+        public IActionResult ActualizarDoctor(int idUsuario, [FromBody] DoctorActualizar doctor)
         {
             _context.Database.OpenConnection();
 
             _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
 
-            var existingDoctor = _context.doctor
-                    .FromSqlInterpolated($"EXEC SP_ObtenerDoctorPorId {id}")
-                    .AsEnumerable()
-                    .SingleOrDefault();
-
-            CargarEspecialidad(existingDoctor);
-            CargarUnidades(existingDoctor);
-
-            if (existingDoctor == null)
-            {
-                return NotFound();
-            }
-            
-            existingDoctor.Codigo = doctorDTO.Codigo;
-            existingDoctor.NombreD = doctorDTO.NombreD;
-            existingDoctor.Apellido1 = doctorDTO.Apellido1;
-            existingDoctor.Apellido2 = doctorDTO.Apellido2;
-            existingDoctor.ID_Especialidad = doctorDTO.ID_Especialidad;
-
             try
             {
-                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {id}, {existingDoctor.Codigo},{existingDoctor.NombreD},{existingDoctor.Apellido1},{existingDoctor.Apellido2},{existingDoctor.ID_Especialidad}");
+                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {doctor.IdDoctor}, {doctor.Codigo},{doctor.Nombre},{doctor.Apellido1},{doctor.Apellido2},{doctor.IdEspecialidad}");
 
-                _context.SaveChanges();
                 _context.Database.CloseConnection();
-                return NoContent();
+                return Ok(doctor);
             }
             catch (Exception ex)
             {

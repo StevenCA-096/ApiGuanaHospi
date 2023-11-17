@@ -2,6 +2,7 @@
 using DataAccess.DTO;
 using DataAccess.Models;
 using DataAccess.RequestObjects;
+using DataAccess.UodateObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,15 +30,9 @@ namespace ApiGuanaHospi.Controllers
         [HttpGet]
         public List<UnidadRequest> GetAllUnidades()
         {
-            var unidades = _context.unidadRequests.FromSqlInterpolated($"SP_ObtenerUnidad").ToList();
+                var unidades = _context.unidadRequests.FromSqlInterpolated($"SP_ObtenerUnidad").ToList();
 
-            foreach (var unidad in unidades)
-            {
-                _context.Entry(unidad)
-                    .Reference(u => u.doctor)
-                    .Load();
-
-            }
+            
 
             return unidades;
         }
@@ -101,26 +96,29 @@ namespace ApiGuanaHospi.Controllers
         //}
 
 
-        [HttpPut("{id}")]
-        public IActionResult PutUnidad(int id, [FromBody] UnidadDTO unidadDTO)
+        [HttpPut]
+        public IActionResult PutUnidad(int idUsuario, [FromBody] UnidadActualizar unidad)
         {
-            var existingUnidad = _context.unidad.FirstOrDefault(d => d.ID_Unidad == id);
-
-            if (existingUnidad == null)
+            _context.Database.OpenConnection();
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
+            try
             {
-                return NotFound();
+                var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarUnidad {unidad.ID_Unidad}, {unidad.Codigo},{unidad.Nombre},{unidad.Planta},{unidad.ID_Dcotor}");
+                _context.Database.CloseConnection();
+                if (result == 2)
+                {
+                    return Ok("Unidad actualizada");
+                }
+                else {
+                    return StatusCode(404);
+                }
+                
+
             }
-
-            existingUnidad.Codigo = unidadDTO.Codigo;
-            existingUnidad.Nombre = unidadDTO.Nombre;
-            existingUnidad.Planta = unidadDTO.Planta;
-            existingUnidad.Id_Doctor = unidadDTO.ID_Doctor;
-
-            _context.Database.ExecuteSqlInterpolated($"SP_ActualizarUnidad {id}, {existingUnidad.Codigo},{existingUnidad.Nombre},{existingUnidad.Planta},{existingUnidad.Id_Doctor}");
-
-            _context.SaveChanges();
-
-            return NoContent();
+            catch (Exception ex){
+                return StatusCode(404);
+            }
+            
         }
 
         [HttpDelete("{id}")]
