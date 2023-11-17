@@ -61,8 +61,10 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostUnidad([FromBody] UnidadDTO unidadDTO)
+        public IActionResult PostUnidad(int idUsuario,[FromBody] UnidadDTO unidadDTO)
         {
+            _context.Database.OpenConnection();
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             var unidad = new Unidad
             {
                 Codigo = unidadDTO.Codigo,
@@ -74,7 +76,7 @@ namespace ApiGuanaHospi.Controllers
             };
 
             _context.Database.ExecuteSqlInterpolated($"SP_InsertarUnidad {unidad.Codigo},{unidad.Nombre},{unidad.Planta},{unidad.Id_Doctor}");
-
+            _context.Database.CloseConnection();
             return Ok("Unidad creada exitosamente");
         }
 
@@ -121,18 +123,21 @@ namespace ApiGuanaHospi.Controllers
             
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteUnidad(int id)
+        [HttpDelete]
+        public IActionResult DeleteUnidad(int id,int idUsuario)
         {
+            _context.Database.OpenConnection();
+            _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             var existingUnidad = _context.unidad.FirstOrDefault(d => d.ID_Unidad == id);
 
             if (existingUnidad == null)
             {
+                _context.Database.CloseConnection();
                 return NotFound();
             }
 
             _context.Database.ExecuteSqlInterpolated($"SP_EliminarUnidad {id}");
-
+            _context.Database.CloseConnection();
             return NoContent();
         }
     }
