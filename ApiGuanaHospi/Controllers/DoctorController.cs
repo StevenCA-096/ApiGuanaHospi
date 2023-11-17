@@ -111,14 +111,14 @@ namespace ApiGuanaHospi.Controllers
                 var doctor = new Doctor
                 {
                     Codigo = doctorDTO.Codigo,
-                    NombreD = doctorDTO.Nombre,
-                    Apellido1 = doctorDTO.Apellido1,
-                    Apellido2 = doctorDTO.Apellido2,
+                    NombreD = doctorDTO.Nombre.Trim(),
+                    Apellido1 = doctorDTO.Apellido1.Trim(),
+                    Apellido2 = doctorDTO.Apellido2.Trim(),
                     ID_Especialidad= doctorDTO.ID_Especialidad,
                     especialidad = null
                 };
 
-                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctorDTO.Nombre},{doctor.Apellido1},{doctor.Apellido2},{doctor.ID_Especialidad}");
+                _context.Database.ExecuteSqlInterpolated($"SP_InsertarDoctor {doctor.Codigo},{doctorDTO.Nombre.Trim()},{doctor.Apellido1.Trim()},{doctor.Apellido2.Trim()},{doctor.ID_Especialidad}");
 
                 _context.Database.CloseConnection();
                 return CreatedAtAction(nameof(GetDoctorById), new { id = doctor.ID_Doctor }, doctor);
@@ -140,7 +140,7 @@ namespace ApiGuanaHospi.Controllers
 
             try
             {
-                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {doctor.IdDoctor}, {doctor.Codigo},{doctor.Nombre},{doctor.Apellido1},{doctor.Apellido2},{doctor.IdEspecialidad}");
+                _context.Database.ExecuteSqlInterpolated($"SP_ActualizarDoctor {doctor.IdDoctor}, {doctor.Codigo},{doctor.Nombre.Trim()},{doctor.Apellido1.Trim()},{doctor.Apellido2.Trim()},{doctor.IdEspecialidad}");
 
                 _context.Database.CloseConnection();
                 return Ok(doctor);

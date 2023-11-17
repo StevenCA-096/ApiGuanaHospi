@@ -71,9 +71,9 @@ namespace ApiGuanaHospi.Controllers
                 var paciente = new Paciente
                 {
                     NumSeguro = pacienteDto.NumSeguro,
-                    Nombre = pacienteDto.Nombre,
-                    Apellido1 = pacienteDto.Apellido1,
-                    Apellido2 = pacienteDto.Apellido2,
+                    Nombre = pacienteDto.Nombre.Trim(),
+                    Apellido1 = pacienteDto.Apellido1.Trim(),
+                    Apellido2 = pacienteDto.Apellido2.Trim(),
                     Edad = pacienteDto.Edad,
                     
 
@@ -99,7 +99,7 @@ namespace ApiGuanaHospi.Controllers
             _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
             try
             {       
-                var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarPaciente {paciente.IdPaciente}, {paciente.NumSeguro}, {paciente.Nombre}, {paciente.Apellido1}, {paciente.Apellido2}, {paciente.Edad}");
+                var result = _context.Database.ExecuteSqlInterpolated($"SP_ActualizarPaciente {paciente.IdPaciente}, {paciente.NumSeguro}, {paciente.Nombre.Trim()}, {paciente.Apellido1.Trim()}, {paciente.Apellido2.Trim()}, {paciente.Edad}");
                 _context.SaveChanges();
                 _context.Database.CloseConnection();
                 return Ok(paciente);
