@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.DTO
+namespace DataAccess.UodateObjects
 {
-    public class DoctorDto
+    public class UnidadActualizar
     {
+        public int ID_Unidad { get; set; }
         public int Codigo { get; set; }
         public string Nombre { get; set; }
-        public string Apellido1 { get; set; }
-        public string Apellido2 { get; set; }
-        public int ID_Especialidad { get; set; }
+        public int Planta { get; set; }
+        public int ID_Dcotor { get; set; }
     }
 }

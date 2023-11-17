@@ -17,6 +17,6 @@ namespace DataAccess.RequestObjects
         public string NombreU { get; set; }
         public int Planta { get; set; }
         public int doctor_id{ get; set; }
-        public Doctor? doctor { get; set; }
+      
     }
 }
