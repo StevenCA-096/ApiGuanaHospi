@@ -3,6 +3,7 @@ using DataAccess.Context;
 using DataAccess.DTO;
 using DataAccess.Models;
 using DataAccess.RequestObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Atencion,Admin")]
         public string Post(int idUsuario,IntervencionDto request) {
             _context.Database.OpenConnection();
             _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
@@ -56,6 +58,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Atencion,Admin")]
         public IActionResult Put(int idUsuario,IntervencionDto request)
         {
             _context.Database.OpenConnection();
@@ -75,6 +78,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Atencion,Admin")]
         public string Delete(int id,int idUsuario) {
             _context.Database.OpenConnection();
             _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");

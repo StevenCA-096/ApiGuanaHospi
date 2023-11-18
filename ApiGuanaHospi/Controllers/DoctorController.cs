@@ -2,6 +2,7 @@
 using DataAccess.DTO;
 using DataAccess.Models;
 using DataAccess.UodateObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -99,6 +100,7 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Gestion,Admin")]
         public IActionResult CrearDoctor(int idUsuario, DoctorDto doctorDTO)
         {
 
@@ -132,10 +134,11 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpPut]
+        [Authorize (Roles = "Gestion,Admin")]
         public IActionResult ActualizarDoctor(int idUsuario, [FromBody] DoctorActualizar doctor)
         {
             _context.Database.OpenConnection();
-
+            
             _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
 
             try
@@ -152,6 +155,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Gestion,Admin")]
         public IActionResult EliminarDoctor(int id,int idUsuario)
         {
             _context.Database.OpenConnection();

@@ -2,6 +2,7 @@
 using DataAccess.DTO;
 using DataAccess.Models;
 using DataAccess.UodateObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -61,6 +62,7 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Atencion,Admin")]
         public IActionResult PostPaciente(int idUsuario,[FromBody]  PacienteDto pacienteDto)
         {
             _context.Database.OpenConnection();
@@ -93,6 +95,7 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpPut]
+        [Authorize(Roles = "Atencion,Admin")]
         public IActionResult PutPaciente(int idUsuario, [FromBody] PacienteActualizar paciente)
         {
             _context.Database.OpenConnection();
@@ -115,6 +118,7 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Atencion,Admin")]
         public IActionResult DeletePaciente(int id,int idUsuario)
         {
             _context.Database.OpenConnection();

@@ -3,6 +3,7 @@ using DataAccess.DTO;
 using DataAccess.Models;
 using DataAccess.RequestObjects;
 using DataAccess.UodateObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -61,6 +62,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Gestion,Admin")]
         public IActionResult PostUnidad(int idUsuario,[FromBody] UnidadDTO unidadDTO)
         {
             _context.Database.OpenConnection();
@@ -99,6 +101,7 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpPut]
+        [Authorize(Roles = "Gestion,Admin")]
         public IActionResult PutUnidad(int idUsuario, [FromBody] UnidadActualizar unidad)
         {
             _context.Database.OpenConnection();
@@ -124,6 +127,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Gestion,Admin")]
         public IActionResult DeleteUnidad(int id,int idUsuario)
         {
             _context.Database.OpenConnection();
