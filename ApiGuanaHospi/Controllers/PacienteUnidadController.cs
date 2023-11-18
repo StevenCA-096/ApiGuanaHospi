@@ -22,6 +22,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Atencion,Admin")]
         public IActionResult GetAllPacienteUnidad()
         {
             try

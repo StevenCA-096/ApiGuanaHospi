@@ -29,6 +29,7 @@ namespace ApiGuanaHospi.Controllers
         //}
 
         [HttpGet]
+        [Authorize(Roles = "Gestion,Admin")]
         public List<UnidadRequest> GetAllUnidades()
         {
                 var unidades = _context.unidadRequests.FromSqlInterpolated($"SP_ObtenerUnidad").ToList();
@@ -41,6 +42,7 @@ namespace ApiGuanaHospi.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Gestion,Admin")]
         public IActionResult GetUnidadById(int id)
         {
             var unidad = _context.unidad

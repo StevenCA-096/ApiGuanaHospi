@@ -23,6 +23,7 @@ namespace ApiGuanaHospi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Gestion,Admin")]
         public IActionResult GetAllDoctor()
         {
             try
@@ -103,7 +104,8 @@ namespace ApiGuanaHospi.Controllers
         [Authorize(Roles = "Gestion,Admin")]
         public IActionResult CrearDoctor(int idUsuario, DoctorDto doctorDTO)
         {
-
+            SqlConnection connection = null;
+            
             try
             {
                 _context.Database.OpenConnection();
@@ -138,7 +140,7 @@ namespace ApiGuanaHospi.Controllers
         public IActionResult ActualizarDoctor(int idUsuario, [FromBody] DoctorActualizar doctor)
         {
             _context.Database.OpenConnection();
-            
+
             _context.Database.ExecuteSqlRaw($"EXEC sp_set_session_context 'user_id', {idUsuario};");
 
             try

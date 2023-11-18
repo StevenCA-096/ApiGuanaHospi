@@ -18,7 +18,7 @@ namespace ApiGuanaHospi.Controllers
             _context = context; 
         }
 
-        
+        [Authorize(Roles = "Atencion,Admin")]
         [HttpGet]
         public List<IntervencionRequest> GetUnidades() { 
            
