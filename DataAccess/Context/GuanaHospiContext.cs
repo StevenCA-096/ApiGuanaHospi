@@ -1,5 +1,6 @@
 ﻿using DataAccess.Models;
 using DataAccess.RequestObjects;
+using DataAccess.RequestViews;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,9 @@ namespace DataAccess.Context
         public DbSet<TipoIntervencion> tipoIntervencion { get; set; } = default!;
         public DbSet<UnidadRequest> unidadRequests { get; set; } = default!;
         public DbSet<Paciente_Unidad> paciente_unidad { get; set; } = default!;
-        public DbSet<PacienteUnidadRequest> pacienteUnidadRequests { get; set; } = default!;    
+        public DbSet<PacienteUnidadRequest> pacienteUnidadRequests { get; set; } = default!;
+        public DbSet<HistorialAcciones> HistorialAcciones { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PacienteUnidadRequest>().HasKey(ur => ur.id_paciente_unidad);
@@ -127,6 +130,8 @@ namespace DataAccess.Context
 
             modelBuilder.Entity<Intervencion>().HasOne(i => i.doctor).WithMany(d => d.intervenciones);
             modelBuilder.Entity<Doctor>().HasMany(d => d.intervenciones).WithOne(i => i.doctor);
+            modelBuilder.Entity<HistorialAcciones>().HasKey(p => p.Id);
+
         }
 
 
